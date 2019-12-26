@@ -1,45 +1,68 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-
-export const TimelineContext = React.createContext()
+import { isArrayOfSizesEqual } from '../utils'
+import styles from '../styles.css'
 
 class Timeline extends Component {
   constructor (props) {
     super(props)
-    this.containerRef = React.createRef()
+    this.colsHeaderRef = React.createRef()
+    this.rowsRefs = this.props.rows.map(React.createRef)
+
+    const { from, to } = this.props
+    const duration = Math.round((to.getTime() - from.getTime()) / 1000)
 
     this.state = {
-      containerWidth: undefined,
-      duration: undefined,
-      scale: undefined
+      colsHeaderSize: undefined,
+      rowsSize: undefined,
+      duration
     }
   }
 
   componentDidMount () {
     window.addEventListener('resize', this.handleResize)
-    this.handleLayoutChange(() => this.scrollToNow())
+    this.handleLayoutChange()
   }
 
   componentWillUnmount () {
     window.removeEventListener('resize', this.handleResize)
   }
 
-  calculateContainerWidth = () => this.containerRef.current.offsetWidth
+  calculateColHeaderSize = () => ({
+    width: this.colsHeaderRef.current.clientWidth,
+    height: this.colsHeaderRef.current.clientHeight
+  })
+
+  calculateRowSize = (rowIndex) => {
+    return ({
+      width: this.rowsRefs[rowIndex].current.clientWidth,
+      height: this.rowsRefs[rowIndex].current.clientHeight
+    })
+  }
+
+  calculateScale = (duration, width) => {
+    return width / duration
+  }
 
   handleLayoutChange = () => {
-    const { from, to } = this.props
-    const { containerWidth } = this.state
+    const { colsHeaderSize, rowsSize } = this.state
 
-    const nextContainerWidth = this.calculateContainerWidth()
+    const nextColHeaderSize = this.calculateColHeaderSize()
+
     // получили значение ширины
-    if (nextContainerWidth !== containerWidth) {
-      const duration = Math.round((to.getTime() - from.getTime()) / 1000)
-      const scale = duration / nextContainerWidth
-
+    if (colsHeaderSize === undefined || (nextColHeaderSize.width !== colsHeaderSize.width || nextColHeaderSize.height !== colsHeaderSize.height)) {
+      const scale = this.calculateScale(this.state.duration, nextColHeaderSize.width)
       this.setState({
-        containerWidth: nextContainerWidth,
-        duration,
+        colsHeaderSize: nextColHeaderSize,
         scale
+      })
+    }
+
+    const nextRowsSize = this.props.rows.map((_, i) => this.calculateRowSize(i))
+    console.log(nextRowsSize)
+    if (rowsSize === undefined || !isArrayOfSizesEqual(rowsSize, nextRowsSize)) {
+      this.setState({
+        rowsSize: nextRowsSize
       })
     }
   }
@@ -47,39 +70,100 @@ class Timeline extends Component {
   handleResize = () => this.handleLayoutChange()
 
   timeCoordinateTranslator = (date) => {
-    return Math.round(this.state.scale * ((date.getTime() - this.props.from.getTime()) / 1000))
+    const { from } = this.props
+    return Math.round(this.state.scale * ((date.getTime() - from.getTime()) / 1000))
   }
 
   render () {
-    const { children, maxWidth, fixedColWidth, fixedRowHeight } = this.props
+    const { rows, cols, maxWidth, renderColHeader, renderRowHeader, renderElement } = this.props
+    const { colsHeaderSize, rowsSize } = this.state
+
     const style = {
-      display: 'flex',
       maxWidth: maxWidth ? maxWidth + 'px' : null
     }
 
     return (
       // todo: передаем много данных, но смотри про повторные render value={{ doSomething: this.doSomething }}
-      <TimelineContext.Provider
-        value={{ fixedColWidth, fixedRowHeight, timeCoordinateTranslator: this.timeCoordinateTranslator }}
+      <div
+        className={styles.root}
+        style={style}
       >
-        <div
-          ref={this.containerRef}
-          style={style}
-        >
-          {children}
+        {colsHeaderSize && rowsSize && (
+          <div
+            className={styles.rowsHeader}
+            style={{ paddingTop: colsHeaderSize.height + 'px' }}
+          >
+            {rows.map((row, rowIndex) => {
+              const style = { height: rowsSize[rowIndex].height + 'px' }
+
+              return (
+                <div
+                  key={row.key}
+                  style={style}
+                >
+                  {renderRowHeader(row)}
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        <div className={styles.rowsBody}>
+          <div
+            ref={this.colsHeaderRef}
+            className={styles.colsHeader}
+          >
+            {cols.map(col => (
+              <div
+                key={col.key}
+                className={styles.col}
+              >
+                {renderColHeader(col)}
+              </div>
+            ))}
+          </div>
+
+          {rows.map((row, rowIndex) => (
+            <div
+              key={row.key}
+              ref={this.rowsRefs[rowIndex]}
+              className={styles.row}
+            >
+              {row.elements.map(element => {
+                const x1 = this.timeCoordinateTranslator(element.start)
+                const x2 = this.timeCoordinateTranslator(element.end)
+                const style = { left: x1 + 'px', width: (x2 - x1) + 'px' }
+
+                return (
+                  <div
+                    key={element.key}
+                    className={styles.element}
+                    style={style}
+                  >
+                    {renderElement(element)}
+                  </div>
+                )
+              })}
+            </div>
+          ))}
         </div>
-      </TimelineContext.Provider>
+      </div>
     )
   }
 }
 
 Timeline.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.element).isRequired,
   from: PropTypes.instanceOf(Date).isRequired,
   to: PropTypes.instanceOf(Date).isRequired,
+  // todo: item prop
+  rows: PropTypes.array,
+  cols: PropTypes.array,
   maxWidth: PropTypes.number,
   fixedColWidth: PropTypes.number,
   fixedRowHeight: PropTypes.number,
+  renderElement: PropTypes.func.isRequired,
+  renderColHeader: PropTypes.func.isRequired,
+  renderRowHeader: PropTypes.func.isRequired,
 }
 
 export default Timeline

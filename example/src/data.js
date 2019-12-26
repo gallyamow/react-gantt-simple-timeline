@@ -18,9 +18,10 @@ const COLS = [...Array(23).keys()].map(hour => {
 const ROWS = [...Array(10).keys()].map(i => {
   const title = `row ${i}`
 
-  const elements = [...Array(i).keys()].map(i => {
-    const offset = Math.floor(Math.random() * 30) + 10
-    const duration = Math.floor(Math.random() * 30) + 10
+  const elements = [...Array(i + 1).keys()].map(i => {
+    const offset = i * 2 + 5
+    const duration = i * 10 + 15
+
     const start = new Date(START_DATE.getTime() + offset * 60000)
     const end = new Date(START_DATE.getTime() + (offset + duration) * 60000)
 

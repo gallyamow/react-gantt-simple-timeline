@@ -1,4 +1,43 @@
 /* todo: style content from app style file */
 /*.element {*/
-  /*background: red;*/
+/*background: red;*/
 /*}*/
+
+.root {
+  display: flex;
+}
+
+.colsHeader {
+  display: inline-flex;
+  flex-wrap: nowrap;
+
+  background: yellow;
+}
+
+.col {
+  /*flex-grow: 1;*/
+}
+
+.rowsHeader {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+
+  background: green;
+}
+
+.rowsBody {
+  background: lightcyan;
+}
+
+.row {
+  display: flex;
+  flex-wrap: nowrap;
+  position: relative;
+}
+
+.element {
+  position: relative;
+  overflow: hidden;
+}
+

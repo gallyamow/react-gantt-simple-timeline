@@ -29,3 +29,12 @@ class Example extends Component {
 ## License
 
 MIT © [Ramil Gallyamov](https://github.com/gallyamow)
+
+## TODO
+
+* make layout based
+* minScale or minColWidth for scrollable grid?
+* isReady prop
+* display: grid ? 
+  https://webdesign.tutsplus.com/tutorials/solving-problems-with-css-grid-the-gantt-chart--cms-33837
+  https://codepen.io/ph1p/pen/JBBjNy
