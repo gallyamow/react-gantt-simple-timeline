@@ -1,34 +1,59 @@
 import React, { Component } from 'react'
-import faker from 'faker'
-import { Timeline, TimelineRow, TimelineHead, TimelineBody, TimelineElement } from 'react-gantt-timeline'
-
-const rows = [...Array(10).keys()].map(i => {
-  const title = `row ${i}`
-  const elements = [...Array(i).keys()].map(i => ({
-    key: `element-${i}`,
-    title: `element ${i}`,
-    content: faker.lorem.paragraph()
-  }))
-  return { title, key: `row-${i}`, elements }
-})
+import {
+  Timeline,
+  TimelineRowsHeader,
+  TimelineRowHead,
+  TimelineBody,
+  TimelineColsHeader,
+  TimelineColHead,
+  TimelineRow,
+  TimelineElement
+} from 'react-gantt-timeline'
+import { START_DATE, END_DATE, ROWS, COLS } from './data'
 
 export default class App extends Component {
   render () {
     return (
-      <Timeline>
-        {rows.map(row => (
-          <TimelineRow key={row.key}>
-            <TimelineHead>{row.title}</TimelineHead>
-            <TimelineBody>
+      <Timeline
+        from={START_DATE}
+        to={END_DATE}
+      >
+        <TimelineRowsHeader>
+          {ROWS.map(row => (
+            <TimelineRowHead key={row.key}>
+              <div className='your-row-head'>{row.title}</div>
+            </TimelineRowHead>
+          ))}
+        </TimelineRowsHeader>
+
+        <TimelineBody>
+          <TimelineColsHeader>
+            {COLS.map(col => (
+              <TimelineColHead key={col.key}>
+                <div className='your-col-head'>
+                  {col.title}
+                </div>
+              </TimelineColHead>
+            ))}
+          </TimelineColsHeader>
+
+          {ROWS.map(row => (
+            <TimelineRow key={row.key}>
               {row.elements.map(element => (
-                <TimelineElement key={element.key}>
-                  <h4>{element.title}</h4>
-                  <p>{element.content}</p>
+                <TimelineElement
+                  key={element.key}
+                  start={element.start}
+                  end={element.end}
+                >
+                  <div className='your-element'>
+                    <h4>{element.title}</h4>
+                    <p>{element.content}</p>
+                  </div>
                 </TimelineElement>
               ))}
-            </TimelineBody>
-          </TimelineRow>
-        ))}
+            </TimelineRow>
+          ))}
+        </TimelineBody>
       </Timeline>
     )
   }

@@ -1,8 +1,7 @@
 import React from 'react'
 
-const Body = ({ children }) => {
+const RowsHeader = ({ children }) => {
   const style = { display: 'flex', flexDirection: 'column' }
-
   return (
     <div style={style}>
       {children}
@@ -10,4 +9,4 @@ const Body = ({ children }) => {
   )
 }
 
-export default Body
+export default RowsHeader

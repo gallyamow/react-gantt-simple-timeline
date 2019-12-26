@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Row = ({ children }) => {
+const ColsHeader = ({ children }) => {
   const style = { display: 'flex' }
   return (
     <div style={style}>
@@ -9,4 +9,4 @@ const Row = ({ children }) => {
   )
 }
 
-export default Row
+export default ColsHeader
