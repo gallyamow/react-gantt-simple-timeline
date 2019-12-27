@@ -59,7 +59,8 @@ class Timeline extends Component {
     }
 
     const nextRowsSize = this.props.rows.map((_, i) => this.calculateRowSize(i))
-    console.log(nextRowsSize)
+    console.log('nextRowsSize', nextRowsSize)
+
     if (rowsSize === undefined || !isArrayOfSizesEqual(rowsSize, nextRowsSize)) {
       this.setState({
         rowsSize: nextRowsSize

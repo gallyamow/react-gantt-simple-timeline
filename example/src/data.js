@@ -1,7 +1,7 @@
 import faker from 'faker'
 
 const START_DATE = new Date('2019-12-17T12:00:00')
-const END_DATE = new Date('2019-12-17T18:00:00')
+let END_DATE = null
 
 const COLS = [...Array(23).keys()].map(hour => {
   const start = new Date(START_DATE.getTime() + hour * 60 * 60000)
@@ -25,6 +25,7 @@ const ROWS = [...Array(10).keys()].map(i => {
     const start = new Date(START_DATE.getTime() + offset * 60000)
     const end = new Date(START_DATE.getTime() + (offset + duration) * 60000)
 
+    END_DATE = end
     return {
       key: `element-${i}`,
       title: `element ${i}`,

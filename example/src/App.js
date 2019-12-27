@@ -6,6 +6,7 @@ export default class App extends Component {
   renderElement = (element) => (
     <div className='your-element'>
       <h4>{element.title}</h4>
+      <p><b>{element.start.toLocaleString()} - {element.end.toLocaleString()}</b></p>
       <p>{element.content}</p>
     </div>
   )
