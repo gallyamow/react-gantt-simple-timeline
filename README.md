@@ -47,7 +47,7 @@ MIT © [Ramil Gallyamov](https://github.com/gallyamow)
 
 ## TODO
 
-* make layout based
+* declarative layout
 * minScale or minColWidth for scrollable grid?
 * isReady prop
 * display: grid ? 
