@@ -18,6 +18,8 @@ npm install --save react-gantt-timeline
 
 ## Usage
 
+[Demo](https://gallyamow.github.io/react-gantt-timeline/index.html)
+
 ```jsx
 import React, { Component } from 'react'
 
