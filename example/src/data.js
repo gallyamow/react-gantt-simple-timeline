@@ -25,7 +25,7 @@ const COLS = [...Array(COLS_COUNT).keys()].map(i => {
 const ROWS = [...Array(ROWS_COUNT).keys()].map(i => {
   const title = `row ${i}`
 
-  const elements = [...Array(i + 1).keys()].map(i => {
+  const elements = [...Array(i + 2).keys()].map(i => {
     const offset = i * 2 + 2
     const duration = i * 10 + 15
 
