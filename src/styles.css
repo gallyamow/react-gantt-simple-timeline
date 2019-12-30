@@ -10,8 +10,6 @@
 .colsHeader {
   display: inline-flex;
   flex-wrap: nowrap;
-
-  background: yellow;
 }
 
 .col {
@@ -22,22 +20,31 @@
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
+}
 
-  background: green;
+.rowsHeaderItem {
+  box-sizing: border-box;
 }
 
 .rowsBody {
-  background: lightcyan;
+  position: relative;
 }
 
 .row {
-  display: flex;
-  flex-wrap: nowrap;
-  position: relative;
+  /*display: flex;*/
+  /*flex-wrap: nowrap;*/
+  /*position: relative;*/
+  /* чтобы работат offsetHeight*/
+  overflow: hidden;
 }
 
 .element {
   position: relative;
   overflow: hidden;
+  /* margin between second element that starts when first is continued */
+  margin: .5rem 0;
 }
 
+.gridLine {
+
+}

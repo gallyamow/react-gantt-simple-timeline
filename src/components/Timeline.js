@@ -3,25 +3,34 @@ import PropTypes from 'prop-types'
 import { isArrayOfSizesEqual } from '../utils'
 import styles from '../styles.css'
 
+// todo: functional + hooks
 class Timeline extends Component {
   constructor (props) {
     super(props)
     this.colsHeaderRef = React.createRef()
     this.rowsRefs = this.props.rows.map(React.createRef)
 
-    const { from, to } = this.props
+    // todo: validation
+    const { from, to, cols, rows } = this.props
     const duration = Math.round((to.getTime() - from.getTime()) / 1000)
 
     this.state = {
       colsHeaderSize: undefined,
-      rowsSize: undefined,
+      rowSizes: undefined,
+      colWidth: undefined,
+      // rows summary height
+      rowsHeight: undefined,
+      colsCount: cols.length,
+      rowsCount: rows.length,
       duration
     }
   }
 
   componentDidMount () {
     window.addEventListener('resize', this.handleResize)
-    this.handleLayoutChange()
+    window.requestAnimationFrame(() => {
+      this.handleLayoutChange()
+    })
   }
 
   componentWillUnmount () {
@@ -35,35 +44,47 @@ class Timeline extends Component {
 
   calculateRowSize = (rowIndex) => {
     return ({
-      width: this.rowsRefs[rowIndex].current.clientWidth,
-      height: this.rowsRefs[rowIndex].current.clientHeight
+      width: this.rowsRefs[rowIndex].current.offsetWidth,
+      height: this.rowsRefs[rowIndex].current.offsetHeight
     })
   }
 
-  calculateScale = (duration, width) => {
+  calculateScale = (width, duration) => {
     return width / duration
   }
 
+  // this value is maximal width of any col, we use overflow: hidden to prevent to expand them
+  calculateColWidth (width, count) {
+    return Math.ceil(width / count)
+  }
+
   handleLayoutChange = () => {
-    const { colsHeaderSize, rowsSize } = this.state
+    const { fixedColWidth } = this.props
+    const { colsHeaderSize, rowSizes, duration, colsCount } = this.state
 
     const nextColHeaderSize = this.calculateColHeaderSize()
 
     // получили значение ширины
     if (colsHeaderSize === undefined || (nextColHeaderSize.width !== colsHeaderSize.width || nextColHeaderSize.height !== colsHeaderSize.height)) {
-      const scale = this.calculateScale(this.state.duration, nextColHeaderSize.width)
+      const scale = this.calculateScale(nextColHeaderSize.width, duration)
+
+      // we use fixed width or calculate it base on current cols header width
+      const colWidth = fixedColWidth === undefined
+        ? this.calculateColWidth(nextColHeaderSize.width, colsCount)
+        : fixedColWidth
+
       this.setState({
         colsHeaderSize: nextColHeaderSize,
+        colWidth,
         scale
       })
     }
 
     const nextRowsSize = this.props.rows.map((_, i) => this.calculateRowSize(i))
-    console.log('nextRowsSize', nextRowsSize)
-
-    if (rowsSize === undefined || !isArrayOfSizesEqual(rowsSize, nextRowsSize)) {
+    if (rowSizes === undefined || !isArrayOfSizesEqual(rowSizes, nextRowsSize)) {
       this.setState({
-        rowsSize: nextRowsSize
+        rowSizes: nextRowsSize,
+        rowsHeight: nextRowsSize.reduce((acc, v) => acc + v.height, 0)
       })
     }
   }
@@ -75,9 +96,96 @@ class Timeline extends Component {
     return Math.round(this.state.scale * ((date.getTime() - from.getTime()) / 1000))
   }
 
+  renderRowsHeader = () => {
+    const { rows, renderRowHeader, gridColor } = this.props
+    const { colsHeaderSize, rowSizes } = this.state
+
+    return <div
+      className={styles.rowsHeader}
+      style={{ paddingTop: colsHeaderSize.height + 'px' }}
+    >
+      {rows.map((row, rowIndex) => {
+        const style = {
+          height: rowSizes[rowIndex].height + 'px',
+          borderTop: `1px solid ${gridColor}`
+        }
+
+        return (
+          <div
+            key={row.key}
+            className={styles.rowsHeaderItem}
+            style={style}
+          >
+            {renderRowHeader(row)}
+          </div>
+        )
+      })}
+    </div>
+  }
+
+  renderColsHeader = () => {
+    const { cols, renderColHeader } = this.props
+    const { colWidth } = this.state
+    const colStyle = {
+      width: colWidth ? colWidth + 'px' : null
+    }
+
+    return <div
+      ref={this.colsHeaderRef}
+      className={styles.colsHeader}
+    >
+      {cols.map(col => (
+        <div
+          key={col.key}
+          className={styles.col}
+          style={colStyle}
+        >
+          {renderColHeader(col)}
+        </div>
+      ))}
+    </div>
+  }
+
+  // todo: allow customize
+  renderGrid = () => {
+    const { gridColor } = this.props
+    const { colsHeaderSize, colsCount, colWidth, rowSizes, rowsHeight } = this.state
+
+    const res = []
+
+    let offset = 0
+    for (let rowSize of rowSizes) {
+      const top = offset + colsHeaderSize.height
+      res.push(<div
+        style={{
+          position: 'absolute',
+          borderBottom: `1px solid ${gridColor}`,
+          width: '100%',
+          top: top + 'px'
+        }}
+      />)
+
+      offset += rowSize.height
+    }
+
+    for (let j = 0; j < colsCount; j++) {
+      res.push(<div
+        style={{
+          position: 'absolute',
+          borderLeft: `1px solid ${gridColor}`,
+          width: colWidth + 'px',
+          height: rowsHeight + 'px',
+          left: (j * colWidth) + 'px'
+        }}
+      />)
+    }
+
+    return res
+  }
+
   render () {
-    const { rows, cols, maxWidth, renderColHeader, renderRowHeader, renderElement } = this.props
-    const { colsHeaderSize, rowsSize } = this.state
+    const { rows, maxWidth, renderElement } = this.props
+    const { colsHeaderSize, rowSizes, colWidth, rowsHeight } = this.state
 
     const style = {
       maxWidth: maxWidth ? maxWidth + 'px' : null
@@ -89,40 +197,11 @@ class Timeline extends Component {
         className={styles.root}
         style={style}
       >
-        {colsHeaderSize && rowsSize && (
-          <div
-            className={styles.rowsHeader}
-            style={{ paddingTop: colsHeaderSize.height + 'px' }}
-          >
-            {rows.map((row, rowIndex) => {
-              const style = { height: rowsSize[rowIndex].height + 'px' }
-
-              return (
-                <div
-                  key={row.key}
-                  style={style}
-                >
-                  {renderRowHeader(row)}
-                </div>
-              )
-            })}
-          </div>
-        )}
+        {colsHeaderSize && rowSizes && this.renderRowsHeader()}
 
         <div className={styles.rowsBody}>
-          <div
-            ref={this.colsHeaderRef}
-            className={styles.colsHeader}
-          >
-            {cols.map(col => (
-              <div
-                key={col.key}
-                className={styles.col}
-              >
-                {renderColHeader(col)}
-              </div>
-            ))}
-          </div>
+          {colWidth && rowsHeight && this.renderGrid()}
+          {this.renderColsHeader()}
 
           {rows.map((row, rowIndex) => (
             <div
@@ -162,6 +241,7 @@ Timeline.propTypes = {
   maxWidth: PropTypes.number,
   fixedColWidth: PropTypes.number,
   fixedRowHeight: PropTypes.number,
+  gridColor: PropTypes.string,
   renderElement: PropTypes.func.isRequired,
   renderColHeader: PropTypes.func.isRequired,
   renderRowHeader: PropTypes.func.isRequired,

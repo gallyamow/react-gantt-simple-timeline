@@ -4,21 +4,41 @@ body {
   font-family: sans-serif;
 }
 
+/* your customization styles */
 .your-element {
-  background: burlywood;
-  height: 100%; /* allow */
-  border: 1px solid red;
+  box-sizing: border-box; /* to take all available space */
+  height: 100%; /* to take all available space */
+  border-radius: 10px;
+  padding: 0.5rem;
+}
+
+.your-element-green {
+  background: #2ecaac;
+}
+
+.your-element-red {
+  background: #ff6252;
+}
+
+.your-element-blue {
+  background: #54c6f9;
 }
 
 .your-row-head {
+  box-sizing: border-box; /* to take all available space */
+  height: 100%; /* to take all available space */
   padding: 10px;
   font-weight: bold;
-  background: lightgrey;
-  border: 1px solid red;
+  background: beige;
 }
 
 .your-col-head {
   padding: 15px;
   font-weight: bold;
-  border: 1px solid gray;
+  background: beige;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: bold;
 }
