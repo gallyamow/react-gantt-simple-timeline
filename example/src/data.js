@@ -26,7 +26,7 @@ const ROWS = [...Array(ROWS_COUNT).keys()].map(i => {
   const title = `row ${i}`
 
   const elements = [...Array(i + 1).keys()].map(i => {
-    const offset = i * 2 + 5
+    const offset = i * 2 + 2
     const duration = i * 10 + 15
 
     const start = new Date(START_DATE.getTime() + offset * 60000)

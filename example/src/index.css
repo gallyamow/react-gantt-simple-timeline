@@ -12,6 +12,14 @@ body {
   padding: 0.5rem;
 }
 
+.your-element h3 {
+  margin-top: 0;
+}
+
+.your-element p:last-child {
+  margin-bottom: 0;
+}
+
 .your-element-green {
   background: #2ecaac;
 }
@@ -36,9 +44,4 @@ body {
   padding: 15px;
   font-weight: bold;
   background: beige;
-}
-
-.title {
-  font-size: 1.2rem;
-  font-weight: bold;
 }

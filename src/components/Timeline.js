@@ -38,8 +38,8 @@ class Timeline extends Component {
   }
 
   calculateColHeaderSize = () => ({
-    width: this.colsHeaderRef.current.clientWidth,
-    height: this.colsHeaderRef.current.clientHeight
+    width: this.colsHeaderRef.current.offsetWidth,
+    height: this.colsHeaderRef.current.offsetHeight
   })
 
   calculateRowSize = (rowIndex) => {
@@ -146,6 +146,26 @@ class Timeline extends Component {
     </div>
   }
 
+  renderRowLine = (offset, width, color) => (<div
+    key={offset}
+    style={{
+      position: 'absolute',
+      borderBottom: `1px solid ${color}`,
+      width: width + 'px',
+      top: offset + 'px'
+    }}
+  />)
+
+  renderColLine = (offset, height, color) => (<div
+    key={offset}
+    style={{
+      position: 'absolute',
+      borderLeft: `1px solid ${color}`,
+      height: height + 'px',
+      left: offset + 'px'
+    }}
+  />)
+
   // todo: allow customize
   renderGrid = () => {
     const { gridColor } = this.props
@@ -153,32 +173,27 @@ class Timeline extends Component {
 
     const res = []
 
+    // rows
     let offset = 0
+    offset += colsHeaderSize.height
     for (let rowSize of rowSizes) {
-      const top = offset + colsHeaderSize.height
-      res.push(<div
-        style={{
-          position: 'absolute',
-          borderBottom: `1px solid ${gridColor}`,
-          width: '100%',
-          top: top + 'px'
-        }}
-      />)
-
+      res.push(this.renderRowLine(offset, colsHeaderSize.width, gridColor))
       offset += rowSize.height
     }
 
+    // last line
+    res.push(this.renderRowLine(offset, colsHeaderSize.width, gridColor))
+
+    // cols
+    offset = 0
+    const height = rowsHeight + colsHeaderSize.height
     for (let j = 0; j < colsCount; j++) {
-      res.push(<div
-        style={{
-          position: 'absolute',
-          borderLeft: `1px solid ${gridColor}`,
-          width: colWidth + 'px',
-          height: rowsHeight + 'px',
-          left: (j * colWidth) + 'px'
-        }}
-      />)
+      res.push(this.renderColLine(offset, height, gridColor))
+      offset += colWidth
     }
+
+    // last line
+    res.push(this.renderColLine(offset, height, gridColor))
 
     return res
   }
@@ -240,7 +255,6 @@ Timeline.propTypes = {
   cols: PropTypes.array,
   maxWidth: PropTypes.number,
   fixedColWidth: PropTypes.number,
-  fixedRowHeight: PropTypes.number,
   gridColor: PropTypes.string,
   renderElement: PropTypes.func.isRequired,
   renderColHeader: PropTypes.func.isRequired,

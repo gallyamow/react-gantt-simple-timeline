@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Timeline } from 'react-gantt-timeline'
+import Timeline from 'react-gantt-timeline'
 import { START_DATE, END_DATE, ROWS, COLS } from './data'
 
 const getRandomVariant = (variants) => {
@@ -14,7 +14,7 @@ export default class App extends Component {
     ]
     return (
       <div className={classNames.join(' ')}>
-        <div className='title'>{element.title}</div>
+        <h3>{element.title}</h3>
         <p><b>{element.start.toLocaleString()} - {element.end.toLocaleString()}</b></p>
         <p>{element.content}</p>
       </div>

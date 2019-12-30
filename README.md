@@ -4,6 +4,12 @@
 
 [![NPM](https://img.shields.io/npm/v/react-gantt-timeline.svg)](https://www.npmjs.com/package/react-gantt-timeline) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+## Features
+
+* custom headers content
+* custom element content
+* fixed and auto fit width
+
 ## Install
 
 ```bash
@@ -15,12 +21,21 @@ npm install --save react-gantt-timeline
 ```jsx
 import React, { Component } from 'react'
 
-import MyComponent from 'react-gantt-timeline'
+import Timeline from 'react-gantt-timeline'
 
 class Example extends Component {
   render () {
     return (
-      <MyComponent />
+      <Timeline
+        from={START_DATE}
+        to={END_DATE}
+        rows={ROWS}
+        cols={COLS}
+        gridColor='#CCCCCC'
+        renderElement={this.renderElement}
+        renderColHeader={this.renderColHeader}
+        renderRowHeader={this.renderRowHeader}
+      />
     )
   }
 }

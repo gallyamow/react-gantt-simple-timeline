@@ -27,21 +27,20 @@
 }
 
 .rowsBody {
+  width: 100%;
   position: relative;
+  overflow-x: scroll;
+  overflow-y: hidden;
 }
 
 .row {
-  /*display: flex;*/
-  /*flex-wrap: nowrap;*/
-  /*position: relative;*/
-  /* чтобы работат offsetHeight*/
   overflow: hidden;
 }
 
 .element {
   position: relative;
   overflow: hidden;
-  /* margin between second element that starts when first is continued */
+  /* margin between second element that started when first was continued */
   margin: .5rem 0;
 }
 
