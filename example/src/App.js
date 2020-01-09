@@ -1,22 +1,21 @@
 import React, { Component } from 'react'
 import Timeline from 'react-gantt-timeline'
 import { START_DATE, END_DATE, ROWS, COLS } from './data'
-
-const getRandomVariant = (variants) => {
-  return variants[Math.floor(Math.random() * variants.length)]
-}
+import { getRandomVariant, formatTime } from './utils'
 
 export default class App extends Component {
   renderElement = (element) => {
     const classNames = [
       'your-element',
-      getRandomVariant(['your-element-red', 'your-element-green', 'your-element-blue'])
+      getRandomVariant(['red', 'grey', 'blue'])
     ]
     return (
       <div className={classNames.join(' ')}>
+        <div className='time'>
+          {formatTime(element.start)} - {formatTime(element.end)}
+        </div>
         <h3>{element.title}</h3>
-        <p><b>{element.start.toLocaleString()} - {element.end.toLocaleString()}</b></p>
-        <p>{element.content}</p>
+        <div className='description'>{element.content}</div>
       </div>
     )
   }

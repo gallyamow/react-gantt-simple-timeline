@@ -1,4 +1,5 @@
 import faker from 'faker'
+import { formatTime } from './utils'
 
 const START_DATE = new Date('2019-12-17T12:00:00')
 const END_DATE = new Date('2019-12-17T15:00:00')
@@ -6,17 +7,13 @@ const DURATION = END_DATE.getTime() - START_DATE.getTime()
 const COL_DURATION = 1000 * 60 * 5
 const COLS_COUNT = Math.ceil(DURATION / COL_DURATION)
 
-const getTitleForDate = (date) => {
-  return String(date.getHours()).padStart(2, '0') + ':' + String(date.getMinutes()).padStart(2, '0')
-}
-
 const COLS = [...Array(COLS_COUNT).keys()].map(i => {
   const start = new Date(START_DATE.getTime() + i * COL_DURATION)
   const end = new Date(START_DATE.getTime() + (i + 1) * COL_DURATION)
 
   return {
     key: `col-${i}`,
-    title: getTitleForDate(start),
+    title: formatTime(start),
     start,
     end
   }
