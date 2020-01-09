@@ -7,11 +7,16 @@ import styles from '../styles.css'
 class Timeline extends Component {
   constructor (props) {
     super(props)
-    this.colsHeaderRef = React.createRef()
-    this.rowsRefs = this.props.rows.map(React.createRef)
-
     // todo: validation
     const { from, to, cols, rows } = this.props
+
+    this.colsHeaderRef = React.createRef()
+    this.rowsRefs = rows.map(React.createRef)
+    this.elementsRefs = rows.reduce((acc, row, rowIndex) => {
+      acc[rowIndex] = row.elements.map(React.createRef)
+      return acc
+    }, {})
+
     const duration = Math.round((to.getTime() - from.getTime()) / 1000)
 
     this.state = {
@@ -19,7 +24,7 @@ class Timeline extends Component {
       rowSizes: undefined,
       colWidth: undefined,
       // rows summary height
-      rowsHeight: undefined,
+      summaryRowsHeight: undefined,
       colsCount: cols.length,
       rowsCount: rows.length,
       duration
@@ -42,10 +47,18 @@ class Timeline extends Component {
     height: this.colsHeaderRef.current.offsetHeight
   })
 
-  calculateRowSize = (rowIndex) => {
+  calculateRowSize = rowIndex => {
+    // we find max value of width and height because children are absolute positioned
+    const width = Math.max(...this.elementsRefs[rowIndex]
+      .map(ref => ref.current.offsetWidth + ref.current.offsetLeft)
+    )
+    const height = Math.max(...this.elementsRefs[rowIndex]
+      .map(ref => ref.current.offsetHeight)
+    )
+
     return ({
-      width: this.rowsRefs[rowIndex].current.offsetWidth,
-      height: this.rowsRefs[rowIndex].current.offsetHeight
+      width: width, // this.rowsRefs[rowIndex].current.offsetWidth,
+      height: height // this.rowsRefs[rowIndex].current.offsetHeight
     })
   }
 
@@ -84,14 +97,21 @@ class Timeline extends Component {
     if (rowSizes === undefined || !isArrayOfSizesEqual(rowSizes, nextRowsSize)) {
       this.setState({
         rowSizes: nextRowsSize,
-        rowsHeight: nextRowsSize.reduce((acc, v) => acc + v.height, 0)
+        summaryRowsHeight: nextRowsSize.reduce((acc, v) => acc + v.height, 0)
       })
     }
   }
 
   handleResize = () => this.handleLayoutChange()
 
-  timeCoordinateTranslator = (date) => {
+  handleElementClick = (element, rowIndex) => e => {
+    if (!this.props.handleElementClick) {
+      return
+    }
+    this.props.handleElementClick(element, rowIndex, e)
+  }
+
+  timeCoordinateTranslator = date => {
     const { from } = this.props
     return Math.round(this.state.scale * ((date.getTime() - from.getTime()) / 1000))
   }
@@ -146,7 +166,7 @@ class Timeline extends Component {
     </div>
   }
 
-  renderRowLine = (offset, width, color) => (<div
+  renderGridRowLine = (offset, width, color) => (<div
     key={offset}
     style={{
       position: 'absolute',
@@ -156,7 +176,7 @@ class Timeline extends Component {
     }}
   />)
 
-  renderColLine = (offset, height, color) => (<div
+  renderGridColLine = (offset, height, color) => (<div
     key={offset}
     style={{
       position: 'absolute',
@@ -169,7 +189,7 @@ class Timeline extends Component {
   // todo: allow customize
   renderGrid = () => {
     const { gridColor } = this.props
-    const { colsHeaderSize, colsCount, colWidth, rowSizes, rowsHeight } = this.state
+    const { colsHeaderSize, colsCount, colWidth, rowSizes, summaryRowsHeight } = this.state
 
     const res = []
 
@@ -177,33 +197,39 @@ class Timeline extends Component {
     let offset = 0
     offset += colsHeaderSize.height
     for (let rowSize of rowSizes) {
-      res.push(this.renderRowLine(offset, colsHeaderSize.width, gridColor))
+      res.push(this.renderGridRowLine(offset, colsHeaderSize.width, gridColor))
       offset += rowSize.height
     }
 
     // last line
-    res.push(this.renderRowLine(offset, colsHeaderSize.width, gridColor))
+    res.push(this.renderGridRowLine(offset, colsHeaderSize.width, gridColor))
 
     // cols
     offset = 0
-    const height = rowsHeight + colsHeaderSize.height
+    const height = summaryRowsHeight + colsHeaderSize.height
     for (let j = 0; j < colsCount; j++) {
-      res.push(this.renderColLine(offset, height, gridColor))
+      res.push(this.renderGridColLine(offset, height, gridColor))
       offset += colWidth
     }
 
     // last line
-    res.push(this.renderColLine(offset, height, gridColor))
+    res.push(this.renderGridColLine(offset, height, gridColor))
 
     return res
   }
 
   render () {
     const { rows, maxWidth, renderElement } = this.props
-    const { colsHeaderSize, rowSizes, colWidth, rowsHeight } = this.state
+    const { colsHeaderSize, rowSizes, colWidth, summaryRowsHeight } = this.state
 
     const style = {
       maxWidth: maxWidth ? maxWidth + 'px' : null
+    }
+
+    const rowBodyStyle = {}
+    if (rowSizes) {
+      // rowBodyStyle.width = Math.max(...rowSizes.map(v => v.width)) + 'px'
+      // rowBodyStyle.height = summaryRowsHeight + 'px'
     }
 
     return (
@@ -214,33 +240,47 @@ class Timeline extends Component {
       >
         {colsHeaderSize && rowSizes && this.renderRowsHeader()}
 
-        <div className={styles.rowsBody}>
-          {colWidth && rowsHeight && this.renderGrid()}
+        <div
+          className={styles.rowsBody}
+          style={rowBodyStyle}
+        >
+          {colWidth && summaryRowsHeight && this.renderGrid()}
           {this.renderColsHeader()}
 
-          {rows.map((row, rowIndex) => (
-            <div
-              key={row.key}
-              ref={this.rowsRefs[rowIndex]}
-              className={styles.row}
-            >
-              {row.elements.map(element => {
-                const x1 = this.timeCoordinateTranslator(element.start)
-                const x2 = this.timeCoordinateTranslator(element.end)
-                const style = { left: x1 + 'px', width: (x2 - x1) + 'px' }
+          {rows.map((row, rowIndex) => {
+            const rowStyle = {}
+            if (rowSizes) {
+              rowStyle.width = rowSizes[rowIndex].width + 'px'
+              rowStyle.height = rowSizes[rowIndex].height + 'px'
+            }
 
-                return (
-                  <div
-                    key={element.key}
-                    className={styles.element}
-                    style={style}
-                  >
-                    {renderElement(element)}
-                  </div>
-                )
-              })}
-            </div>
-          ))}
+            return (
+              <div
+                key={row.key}
+                ref={this.rowsRefs[rowIndex]}
+                className={styles.row}
+                style={rowStyle}
+              >
+                {row.elements.map((element, elementIndex) => {
+                  const x1 = this.timeCoordinateTranslator(element.start)
+                  const x2 = this.timeCoordinateTranslator(element.end)
+                  const elementStyle = { left: x1 + 'px', width: (x2 - x1) + 'px' }
+
+                  return (
+                    <div
+                      key={element.key}
+                      ref={this.elementsRefs[rowIndex][elementIndex]}
+                      onClick={this.handleElementClick(element, rowIndex)}
+                      className={styles.element}
+                      style={elementStyle}
+                    >
+                      {renderElement(element)}
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })}
         </div>
       </div>
     )
@@ -259,6 +299,7 @@ Timeline.propTypes = {
   renderElement: PropTypes.func.isRequired,
   renderColHeader: PropTypes.func.isRequired,
   renderRowHeader: PropTypes.func.isRequired,
+  handleElementClick: PropTypes.func,
 }
 
 export default Timeline

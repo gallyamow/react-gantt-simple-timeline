@@ -27,21 +27,27 @@
 }
 
 .rowsBody {
-  width: 100%;
   position: relative;
-  overflow-x: auto;
+  width: 100%;
+  overflow-x: scroll;
   overflow-y: hidden;
 }
 
 .row {
+  position: relative;
   overflow: hidden;
 }
 
 .element {
-  position: relative;
+  cursor: pointer;
+  position: absolute;
   overflow: hidden;
-  /* margin between second element that started when first was continued */
-  margin: .5rem 0;
+  box-sizing: border-box;
+  padding: 0.5rem 0;
+}
+
+.element:hover {
+  z-index: 1; /*animate*/
 }
 
 .gridLine {

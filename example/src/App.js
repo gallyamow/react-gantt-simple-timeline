@@ -29,6 +29,12 @@ export default class App extends Component {
     <div className='your-row-head'>{col.title}</div>
   )
 
+  // noinspection JSUnusedLocalSymbols
+  handleElementClick = (element, rowIndex, e) => {
+    // eslint-disable-next-line no-undef
+    alert(`clicked to element with key "${element.key}" at row with index "${rowIndex}"`)
+  }
+
   render () {
     return (
       <Timeline
@@ -40,6 +46,7 @@ export default class App extends Component {
         renderElement={this.renderElement}
         renderColHeader={this.renderColHeader}
         renderRowHeader={this.renderRowHeader}
+        handleElementClick={this.handleElementClick}
       />
     )
   }
