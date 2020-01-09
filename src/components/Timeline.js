@@ -7,7 +7,6 @@ import styles from '../styles.css'
 class Timeline extends Component {
   constructor (props) {
     super(props)
-    // todo: validation
     const { from, to, cols, rows } = this.props
 
     this.colsHeaderRef = React.createRef()
@@ -218,22 +217,42 @@ class Timeline extends Component {
     return res
   }
 
+  renderCurrentTimeLine = () => {
+    const { current, currentTimeOverlapClass, timeFormatFunction } = this.props
+    const { summaryRowsHeight, colsHeaderSize } = this.state
+    const offset = this.timeCoordinateTranslator(current)
+
+    return <div
+      key={offset}
+      style={{
+        position: 'absolute',
+        top: colsHeaderSize.height + 'px',
+        left: 0,
+        right: offset + 'px'
+      }}
+      className={currentTimeOverlapClass}
+    >
+      <div
+        className='overlap'
+        style={{
+          height: summaryRowsHeight + 'px'
+        }}
+      />
+      <div className='label'>
+        {timeFormatFunction(current)}
+      </div>
+    </div>
+  }
+
   render () {
-    const { rows, maxWidth, renderElement } = this.props
+    const { rows, maxWidth, current, renderElement } = this.props
     const { colsHeaderSize, rowSizes, colWidth, summaryRowsHeight } = this.state
 
     const style = {
       maxWidth: maxWidth ? maxWidth + 'px' : null
     }
 
-    const rowBodyStyle = {}
-    if (rowSizes) {
-      // rowBodyStyle.width = Math.max(...rowSizes.map(v => v.width)) + 'px'
-      // rowBodyStyle.height = summaryRowsHeight + 'px'
-    }
-
     return (
-      // todo: передаем много данных, но смотри про повторные render value={{ doSomething: this.doSomething }}
       <div
         className={styles.root}
         style={style}
@@ -242,9 +261,9 @@ class Timeline extends Component {
 
         <div
           className={styles.rowsBody}
-          style={rowBodyStyle}
         >
           {colWidth && summaryRowsHeight && this.renderGrid()}
+          {colWidth && summaryRowsHeight && current && this.renderCurrentTimeLine()}
           {this.renderColsHeader()}
 
           {rows.map((row, rowIndex) => {
@@ -290,16 +309,36 @@ class Timeline extends Component {
 Timeline.propTypes = {
   from: PropTypes.instanceOf(Date).isRequired,
   to: PropTypes.instanceOf(Date).isRequired,
-  // todo: item prop
-  rows: PropTypes.array,
-  cols: PropTypes.array,
+  current: PropTypes.instanceOf(Date),
+  rows: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      elements: PropTypes.arrayOf(
+        PropTypes.shape({
+          key: PropTypes.string.isRequired,
+          start: PropTypes.instanceOf(Date).isRequired,
+          end: PropTypes.instanceOf(Date).isRequired
+        })
+      ).isRequired
+    })
+  ).isRequired,
+  cols: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      start: PropTypes.instanceOf(Date).isRequired,
+      end: PropTypes.instanceOf(Date).isRequired
+    })
+  ).isRequired,
   maxWidth: PropTypes.number,
   fixedColWidth: PropTypes.number,
   gridColor: PropTypes.string,
+  // todo: validate with requiredIf or make yours validator
+  currentTimeOverlapClass: PropTypes.string,
   renderElement: PropTypes.func.isRequired,
   renderColHeader: PropTypes.func.isRequired,
   renderRowHeader: PropTypes.func.isRequired,
   handleElementClick: PropTypes.func,
+  timeFormatFunction: PropTypes.func
 }
 
 export default Timeline

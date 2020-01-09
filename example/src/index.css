@@ -58,3 +58,22 @@ body {
 .blue {
   background: #5FC8FF;
 }
+
+.currentTimeOverlap {
+  border-right: 1px solid #A11643;
+  z-index: 2;
+}
+
+.currentTimeOverlap .overlap {
+  opacity: 0.5;
+  background: white;
+}
+
+.currentTimeOverlap .label {
+  position: absolute;
+  color: #A11643;
+  /*todo: need customization*/
+  bottom: -22px;
+  right: -18px;
+  font-weight: bold;
+}

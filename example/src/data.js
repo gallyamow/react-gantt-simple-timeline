@@ -3,6 +3,7 @@ import { formatTime } from './utils'
 
 const START_DATE = new Date('2019-12-17T12:00:00')
 const END_DATE = new Date('2019-12-17T15:00:00')
+const CURRENT_DATE = new Date('2019-12-17T13:48:00')
 const DURATION = END_DATE.getTime() - START_DATE.getTime()
 const COL_DURATION = 1000 * 60 * 5
 const COLS_COUNT = Math.ceil(DURATION / COL_DURATION)
@@ -68,7 +69,7 @@ const ROWS = [
     ]
   },
   {
-    title: 'row 3',
+    title: faker.name.jobType(),
     key: `row-3`,
     elements: [
       {
@@ -103,4 +104,4 @@ const ROWS = [
   }
 ]
 
-export { START_DATE, END_DATE, COLS, ROWS }
+export { START_DATE, END_DATE, CURRENT_DATE, COLS, ROWS }

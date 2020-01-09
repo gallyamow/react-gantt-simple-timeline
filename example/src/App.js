@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Timeline from 'react-gantt-timeline'
-import { START_DATE, END_DATE, ROWS, COLS } from './data'
+import { START_DATE, END_DATE, CURRENT_DATE, ROWS, COLS } from './data'
 import { getRandomVariant, formatTime } from './utils'
 
 export default class App extends Component {
@@ -28,6 +28,10 @@ export default class App extends Component {
     <div className='your-row-head'>{col.title}</div>
   )
 
+  timeFormatFunction = (date) => {
+    return formatTime(date)
+  }
+
   // noinspection JSUnusedLocalSymbols
   handleElementClick = (element, rowIndex, e) => {
     // eslint-disable-next-line no-undef
@@ -39,9 +43,12 @@ export default class App extends Component {
       <Timeline
         from={START_DATE}
         to={END_DATE}
+        current={CURRENT_DATE}
         rows={ROWS}
         cols={COLS}
         gridColor='#CCCCCC'
+        currentTimeOverlapClass='currentTimeOverlap'
+        timeFormatFunction={this.timeFormatFunction}
         renderElement={this.renderElement}
         renderColHeader={this.renderColHeader}
         renderRowHeader={this.renderRowHeader}

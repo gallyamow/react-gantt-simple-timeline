@@ -31,6 +31,8 @@
   width: 100%;
   overflow-x: scroll;
   overflow-y: hidden;
+  /*todo: need customization*/
+  padding-bottom: 30px;
 }
 
 .row {
@@ -48,8 +50,4 @@
 
 .element:hover {
   z-index: 1; /*animate*/
-}
-
-.gridLine {
-
 }
