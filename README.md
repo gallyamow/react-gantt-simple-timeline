@@ -4,7 +4,7 @@
 
 [![NPM](https://img.shields.io/npm/v/react-gantt-simple-timeline.svg)](https://www.npmjs.com/package/react-gantt-simple-timeline) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-![image](https://github.com/gallyamow/react-gantt-simple-timeline/blob/master/demo.png?1)
+![image](./demo.png?1)
 
 ## Features
 
