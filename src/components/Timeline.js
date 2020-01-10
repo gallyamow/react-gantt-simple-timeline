@@ -143,7 +143,6 @@ class Timeline extends Component {
       {rows.map((row, rowIndex) => {
         const style = {
           height: rowSizes[rowIndex].height + 'px',
-          borderTop: `1px solid ${gridColor}`
         }
 
         return (
