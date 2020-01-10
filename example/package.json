@@ -1,6 +1,6 @@
 {
-  "name": "react-gantt-timeline-example",
-  "homepage": "https://gallyamow.github.io/react-gantt-timeline",
+  "name": "react-gantt-simple-timeline-example",
+  "homepage": "https://gallyamow.github.io/react-gantt-simple-timeline",
   "version": "0.0.0",
   "license": "MIT",
   "private": true,
@@ -9,7 +9,7 @@
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-scripts": "^1.1.4",
-    "react-gantt-timeline": "file:.."
+    "react-gantt-simple-timeline": "file:.."
   },
   "scripts": {
     "start": "react-scripts start",

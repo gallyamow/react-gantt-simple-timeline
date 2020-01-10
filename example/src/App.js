@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Timeline from 'react-gantt-timeline'
+import Timeline from 'react-gantt-simple-timeline'
 import { START_DATE, END_DATE, CURRENT_DATE, ROWS, COLS } from './data'
 import { getRandomVariant, formatTime } from './utils'
 
@@ -25,7 +25,11 @@ export default class App extends Component {
   )
 
   renderRowHeader = (col) => (
-    <div className='your-row-head'>{col.title}</div>
+    <div className='your-row-head'>
+      <div className='wrapper'>
+        <div className='content'>{col.title}</div>
+      </div>
+    </div>
   )
 
   timeFormatFunction = (date) => {

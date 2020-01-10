@@ -11,10 +11,21 @@ body {
 .your-row-head {
   box-sizing: border-box; /* to take all available space */
   height: 100%; /* to take all available space */
+  display: flex;
+  align-items: center;
+}
 
-  padding: 60px;
-  font-weight: bold;
+.your-row-head .wrapper {
+  display: flex;
+  align-items: center;
   background: #F4F7FB;
+  padding:0 5px;
+  height: 80%;
+  width: 100%;
+}
+
+.your-row-head .wrapper .content {
+  font-weight: bold;
 }
 
 .your-col-head {
@@ -70,10 +81,6 @@ body {
 }
 
 .currentTimeOverlap .label {
-  position: absolute;
   color: #A11643;
-  /*todo: need customization*/
-  bottom: -22px;
-  right: -18px;
   font-weight: bold;
 }

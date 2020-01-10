@@ -35,6 +35,9 @@
   padding-bottom: 30px;
 }
 
+.gridLine {
+}
+
 .row {
   position: relative;
   overflow: hidden;

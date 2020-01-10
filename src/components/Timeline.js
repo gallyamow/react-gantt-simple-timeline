@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { isArrayOfSizesEqual } from '../utils'
+import { isArrayOfSizesEqual, isSizeEqual } from '../utils'
 import styles from '../styles.css'
 
 // todo: functional + hooks
@@ -15,18 +15,22 @@ class Timeline extends Component {
       acc[rowIndex] = row.elements.map(React.createRef)
       return acc
     }, {})
+    this.currentTimeLabelRef = React.createRef()
 
     const duration = Math.round((to.getTime() - from.getTime()) / 1000)
 
     this.state = {
       colsHeaderSize: undefined,
+      currentTimeLabelSize: undefined,
+      horizontalOffset: undefined,
       rowSizes: undefined,
       colWidth: undefined,
       // rows summary height
       summaryRowsHeight: undefined,
       colsCount: cols.length,
       rowsCount: rows.length,
-      duration
+      duration,
+      gutter: 5
     }
   }
 
@@ -41,9 +45,9 @@ class Timeline extends Component {
     window.removeEventListener('resize', this.handleResize)
   }
 
-  calculateColHeaderSize = () => ({
-    width: this.colsHeaderRef.current.offsetWidth,
-    height: this.colsHeaderRef.current.offsetHeight
+  calculateSize = (ref) => ({
+    width: ref.current.offsetWidth,
+    height: ref.current.offsetHeight
   })
 
   calculateRowSize = rowIndex => {
@@ -71,13 +75,13 @@ class Timeline extends Component {
   }
 
   handleLayoutChange = () => {
-    const { fixedColWidth } = this.props
-    const { colsHeaderSize, rowSizes, duration, colsCount } = this.state
+    const { fixedColWidth, current } = this.props
+    const { colsHeaderSize, currentTimeLabelSize, rowSizes, duration, colsCount } = this.state
 
-    const nextColHeaderSize = this.calculateColHeaderSize()
+    const nextColHeaderSize = this.calculateSize(this.colsHeaderRef)
 
     // получили значение ширины
-    if (colsHeaderSize === undefined || (nextColHeaderSize.width !== colsHeaderSize.width || nextColHeaderSize.height !== colsHeaderSize.height)) {
+    if (colsHeaderSize === undefined || !isSizeEqual(nextColHeaderSize, colsHeaderSize)) {
       const scale = this.calculateScale(nextColHeaderSize.width, duration)
 
       // we use fixed width or calculate it base on current cols header width
@@ -85,8 +89,11 @@ class Timeline extends Component {
         ? this.calculateColWidth(nextColHeaderSize.width, colsCount)
         : fixedColWidth
 
+      const horizontalOffset = Math.round(colWidth / 2)
+
       this.setState({
         colsHeaderSize: nextColHeaderSize,
+        horizontalOffset,
         colWidth,
         scale
       })
@@ -99,6 +106,15 @@ class Timeline extends Component {
         summaryRowsHeight: nextRowsSize.reduce((acc, v) => acc + v.height, 0)
       })
     }
+
+    if (current) {
+      const nextCurrentTimeLabelSize = this.calculateSize(this.currentTimeLabelRef)
+      if (currentTimeLabelSize === undefined || !isSizeEqual(nextCurrentTimeLabelSize, currentTimeLabelSize)) {
+        this.setState({
+          currentTimeLabelSize: nextCurrentTimeLabelSize
+        })
+      }
+    }
   }
 
   handleResize = () => this.handleLayoutChange()
@@ -110,9 +126,10 @@ class Timeline extends Component {
     this.props.handleElementClick(element, rowIndex, e)
   }
 
-  timeCoordinateTranslator = date => {
+  timeToOffset = date => {
     const { from } = this.props
-    return Math.round(this.state.scale * ((date.getTime() - from.getTime()) / 1000))
+    const { horizontalOffset } = this.state
+    return Math.round(this.state.scale * ((date.getTime() - from.getTime()) / 1000)) + horizontalOffset
   }
 
   renderRowsHeader = () => {
@@ -165,80 +182,92 @@ class Timeline extends Component {
     </div>
   }
 
-  renderGridRowLine = (offset, width, color) => (<div
-    key={offset}
+  renderHorizontalLine = (x, y, width, color) => (<div
+    key={x + '-' + y}
+    className={styles.gridLine}
     style={{
       position: 'absolute',
       borderBottom: `1px solid ${color}`,
       width: width + 'px',
-      top: offset + 'px'
+      left: x + 'px',
+      top: y + 'px'
     }}
   />)
 
-  renderGridColLine = (offset, height, color) => (<div
-    key={offset}
+  renderVerticalLine = (x, y, height, color) => (<div
+    key={x + '-' + y}
+    className={styles.gridLine}
     style={{
       position: 'absolute',
       borderLeft: `1px solid ${color}`,
       height: height + 'px',
-      left: offset + 'px'
+      left: x + 'px',
+      top: y + 'px'
     }}
   />)
 
   // todo: allow customize
   renderGrid = () => {
     const { gridColor } = this.props
-    const { colsHeaderSize, colsCount, colWidth, rowSizes, summaryRowsHeight } = this.state
+    const { colsHeaderSize, colsCount, colWidth, rowSizes, summaryRowsHeight, horizontalOffset, gutter } = this.state
 
     const res = []
 
     // rows
-    let offset = 0
-    offset += colsHeaderSize.height
+    let y = 0
+    y += colsHeaderSize.height
     for (let rowSize of rowSizes) {
-      res.push(this.renderGridRowLine(offset, colsHeaderSize.width, gridColor))
-      offset += rowSize.height
+      res.push(this.renderHorizontalLine(0, y, colsHeaderSize.width, gridColor))
+      y += rowSize.height
     }
 
     // last line
-    res.push(this.renderGridRowLine(offset, colsHeaderSize.width, gridColor))
+    res.push(this.renderHorizontalLine(0, y, colsHeaderSize.width, gridColor))
 
     // cols
-    offset = 0
-    const height = summaryRowsHeight + colsHeaderSize.height
+    let x = horizontalOffset
     for (let j = 0; j < colsCount; j++) {
-      res.push(this.renderGridColLine(offset, height, gridColor))
-      offset += colWidth
+      res.push(this.renderVerticalLine(x, colsHeaderSize.height - gutter, summaryRowsHeight, gridColor))
+      x += colWidth
     }
 
     // last line
-    res.push(this.renderGridColLine(offset, height, gridColor))
+    res.push(this.renderVerticalLine(x, colsHeaderSize.height - gutter, summaryRowsHeight, gridColor))
 
     return res
   }
 
   renderCurrentTimeLine = () => {
     const { current, currentTimeOverlapClass, timeFormatFunction } = this.props
-    const { summaryRowsHeight, colsHeaderSize } = this.state
-    const offset = this.timeCoordinateTranslator(current)
+    const { summaryRowsHeight, colsHeaderSize, gutter } = this.state
+    const x = this.timeToOffset(current)
 
     return <div
-      key={offset}
+      key={x}
       style={{
         position: 'absolute',
         top: colsHeaderSize.height + 'px',
         left: 0,
-        right: offset + 'px'
+        width: x + 'px'
       }}
       className={currentTimeOverlapClass}
     >
       <div
-        className='overlap'
         style={{
           height: summaryRowsHeight + 'px'
         }}
+        className='overlap'
       />
-      <div className='label'>
+      <div
+        ref={this.currentTimeLabelRef}
+        style={{
+          position: 'absolute',
+          bottom: -(gutter) + 'px',
+          right: 0,
+          transform: 'translate(50%, 100%)'
+        }}
+        className='label'
+      >
         {timeFormatFunction(current)}
       </div>
     </div>
@@ -281,8 +310,8 @@ class Timeline extends Component {
                 style={rowStyle}
               >
                 {row.elements.map((element, elementIndex) => {
-                  const x1 = this.timeCoordinateTranslator(element.start)
-                  const x2 = this.timeCoordinateTranslator(element.end)
+                  const x1 = this.timeToOffset(element.start)
+                  const x2 = this.timeToOffset(element.end)
                   const elementStyle = { left: x1 + 'px', width: (x2 - x1) + 'px' }
 
                   return (

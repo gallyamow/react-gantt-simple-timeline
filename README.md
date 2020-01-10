@@ -1,8 +1,8 @@
-# react-gantt-timeline
+# react-gantt-simple-timeline
 
 > Horizontal gantt timeline
 
-[![NPM](https://img.shields.io/npm/v/react-gantt-timeline.svg)](https://www.npmjs.com/package/react-gantt-timeline) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-gantt-simple-timeline.svg)](https://www.npmjs.com/package/react-gantt-simple-timeline) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Features
 
@@ -13,17 +13,17 @@
 ## Install
 
 ```bash
-npm install --save react-gantt-timeline
+npm install --save react-gantt-simple-timeline
 ```
 
 ## Usage
 
-[Demo](https://gallyamow.github.io/react-gantt-timeline/index.html)
+See [Demo](https://gallyamow.github.io/react-gantt-simple-timeline/index.html)
 
 ```jsx
 import React, { Component } from 'react'
 
-import Timeline from 'react-gantt-timeline'
+import Timeline from 'react-gantt-simple-timeline'
 
 class Example extends Component {
   render () {
@@ -31,12 +31,16 @@ class Example extends Component {
       <Timeline
         from={START_DATE}
         to={END_DATE}
+        current={CURRENT_DATE}
         rows={ROWS}
         cols={COLS}
         gridColor='#CCCCCC'
+        currentTimeOverlapClass='currentTimeOverlap'
+        timeFormatFunction={this.timeFormatFunction}
         renderElement={this.renderElement}
         renderColHeader={this.renderColHeader}
         renderRowHeader={this.renderRowHeader}
+        handleElementClick={this.handleElementClick}
       />
     )
   }

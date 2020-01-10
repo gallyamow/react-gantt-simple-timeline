@@ -1,10 +1,10 @@
 {
-  "name": "react-gantt-timeline",
-  "version": "1.0.0",
+  "name": "react-gantt-simple-timeline",
+  "version": "1.0.1",
   "description": "Horizontal gantt timeline",
   "author": "Ramil Gallyamov <gallyamow@gmail.com>",
   "license": "MIT",
-  "repository": "Ramil Gallyamov/react-gantt-timeline",
+  "repository": "https://github.com/gallyamow/react-gantt-simple-timeline",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
