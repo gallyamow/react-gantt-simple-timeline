@@ -26,6 +26,29 @@ import React, { Component } from 'react'
 import Timeline from 'react-gantt-simple-timeline'
 
 class Example extends Component {
+  renderElement = (element) => {
+    return (
+      <div className='your-element'>
+        custom content  
+      </div>
+    )
+  }
+
+  renderColHeader = (col) => (
+    <div className='your-col-head'>custom title</div>
+  )
+
+  renderRowHeader = (col) => (
+    <div className='your-row-head'>custom header</div>
+  )
+
+  timeFormatFunction = (date) => {
+    return formatTime(date)
+  }
+
+  handleElementClick = (element, rowIndex, e) => {
+  }
+  
   render () {
     return (
       <Timeline
