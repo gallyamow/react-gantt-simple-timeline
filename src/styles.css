@@ -5,6 +5,7 @@
 .colsHeaderItem {
   display: inline-flex;
   flex-wrap: nowrap;
+  text-align: center;
 }
 
 .rowsHeader {
