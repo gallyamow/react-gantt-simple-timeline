@@ -133,11 +133,11 @@ class Timeline extends Component {
   }
 
   renderRowsHeader = () => {
-    const { rows, renderRowHeader, gridColor } = this.props
+    const { rows, rowsHeaderClass, renderRowHeader } = this.props
     const { colsHeaderSize, rowSizes } = this.state
 
     return <div
-      className={styles.rowsHeader}
+      className={[rowsHeaderClass, styles.rowsHeader].join(' ')}
       style={{ paddingTop: colsHeaderSize.height + 'px' }}
     >
       {rows.map((row, rowIndex) => {
@@ -159,7 +159,7 @@ class Timeline extends Component {
   }
 
   renderColsHeader = () => {
-    const { cols, renderColHeader } = this.props
+    const { cols, colsHeaderClass, renderColHeader } = this.props
     const { colWidth } = this.state
     const colStyle = {
       width: colWidth ? colWidth + 'px' : null
@@ -167,7 +167,7 @@ class Timeline extends Component {
 
     return <div
       ref={this.colsHeaderRef}
-      className={styles.colsHeader}
+      className={[colsHeaderClass, styles.colsHeader].join(' ')}
     >
       {cols.map(col => (
         <div
@@ -183,7 +183,7 @@ class Timeline extends Component {
 
   renderHorizontalLine = (x, y, width, color) => (<div
     key={x + '-' + y}
-    className={styles.gridLine}
+    className={[this.props.gridLineClass, styles.gridLine].join(' ')}
     style={{
       position: 'absolute',
       borderBottom: `1px solid ${color}`,
@@ -195,7 +195,7 @@ class Timeline extends Component {
 
   renderVerticalLine = (x, y, height, color) => (<div
     key={x + '-' + y}
-    className={styles.gridLine}
+    className={[this.props.gridLineClass, styles.gridLine].join(' ')}
     style={{
       position: 'absolute',
       borderLeft: `1px solid ${color}`,
@@ -273,7 +273,7 @@ class Timeline extends Component {
   }
 
   render () {
-    const { rows, maxWidth, current, renderElement } = this.props
+    const { rows, rowsBodyClass, maxWidth, current, renderElement } = this.props
     const { colsHeaderSize, rowSizes, colWidth, summaryRowsHeight } = this.state
 
     const style = {
@@ -288,7 +288,7 @@ class Timeline extends Component {
         {colsHeaderSize && rowSizes && this.renderRowsHeader()}
 
         <div
-          className={styles.rowsBody}
+          className={[rowsBodyClass, styles.rowsBody].join(' ')}
         >
           {colWidth && summaryRowsHeight && this.renderGrid()}
           {colWidth && summaryRowsHeight && current && this.renderCurrentTimeLine()}
@@ -360,13 +360,17 @@ Timeline.propTypes = {
   maxWidth: PropTypes.number,
   fixedColWidth: PropTypes.number,
   gridColor: PropTypes.string,
-  // todo: validate with requiredIf or make yours validator
-  currentTimeOverlapClass: PropTypes.string,
   renderElement: PropTypes.func.isRequired,
   renderColHeader: PropTypes.func.isRequired,
   renderRowHeader: PropTypes.func.isRequired,
   handleElementClick: PropTypes.func,
-  timeFormatFunction: PropTypes.func
+  timeFormatFunction: PropTypes.func,
+  // todo: validate with requiredIf or make yours validator
+  currentTimeOverlapClass: PropTypes.string,
+  rowsHeaderClass: PropTypes.string,
+  colsHeaderClass: PropTypes.string,
+  gridLineClass: PropTypes.string,
+  rowsBodyClass: PropTypes.string,
 }
 
 export default Timeline

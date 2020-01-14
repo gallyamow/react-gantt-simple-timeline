@@ -1,6 +1,6 @@
 {
   "name": "react-gantt-simple-timeline",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Horizontal gantt timeline",
   "author": "Ramil Gallyamov <gallyamow@gmail.com>",
   "license": "MIT",
@@ -57,5 +57,12 @@
   },
   "files": [
     "dist"
+  ],
+  "keywords": [
+    "timeline",
+    "schedule",
+    "react",
+    "gantt",
+    "horizontal"
   ]
 }

@@ -51,6 +51,7 @@ export default class App extends Component {
         rows={ROWS}
         cols={COLS}
         gridColor='#CCCCCC'
+        rowsBodyClass='rowsBody'
         currentTimeOverlapClass='currentTimeOverlap'
         timeFormatFunction={this.timeFormatFunction}
         renderElement={this.renderElement}
