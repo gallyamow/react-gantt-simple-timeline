@@ -137,7 +137,7 @@ class Timeline extends Component {
     const { colsHeaderSize, rowSizes } = this.state
 
     return <div
-      className={[rowsHeaderClass, styles.rowsHeader].join(' ')}
+      className={[rowsHeaderClass, styles.rowsHeaderItem].join(' ')}
       style={{ paddingTop: colsHeaderSize.height + 'px' }}
     >
       {rows.map((row, rowIndex) => {
@@ -167,7 +167,7 @@ class Timeline extends Component {
 
     return <div
       ref={this.colsHeaderRef}
-      className={[colsHeaderClass, styles.colsHeader].join(' ')}
+      className={[colsHeaderClass, styles.colsHeaderItem].join(' ')}
     >
       {cols.map(col => (
         <div

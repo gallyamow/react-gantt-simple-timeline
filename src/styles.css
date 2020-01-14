@@ -1,19 +1,10 @@
-/* todo: style content from app style file */
-/*.element {*/
-/*background: red;*/
-/*}*/
-
 .root {
   display: flex;
 }
 
-.colsHeader {
+.colsHeaderItem {
   display: inline-flex;
   flex-wrap: nowrap;
-}
-
-.col {
-  /*flex-grow: 1;*/
 }
 
 .rowsHeader {
@@ -35,9 +26,6 @@
   padding-bottom: 30px;
 }
 
-.gridLine {
-}
-
 .row {
   position: relative;
   overflow: hidden;
@@ -52,5 +40,5 @@
 }
 
 .element:hover {
-  z-index: 1; /*animate*/
+  z-index: 1; /*todo: animate*/
 }
