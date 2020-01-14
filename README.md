@@ -59,13 +59,18 @@ class Example extends Component {
         current={CURRENT_DATE}
         rows={ROWS}
         cols={COLS}
-        gridColor='#CCCCCC'
         currentTimeOverlapClass='currentTimeOverlap'
         timeFormatFunction={this.timeFormatFunction}
         renderElement={this.renderElement}
         renderColHeader={this.renderColHeader}
         renderRowHeader={this.renderRowHeader}
         handleElementClick={this.handleElementClick}
+        gridColor='#CCCCCC'
+        currentTimeOverlapClass='customizeIfNeed'
+        rowsHeaderClass='customizeIfNeed'
+        colsHeaderClass='customizeIfNeed'
+        gridLineClass='customizeIfNeed'
+        rowsBodyClass='customizeIfNeed'
       />
     )
   }

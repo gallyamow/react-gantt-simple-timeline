@@ -30,10 +30,17 @@ const ROWS = [
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T12:03:00'),
-        end: new Date('2019-12-17T13:25:00')
+        end: new Date('2019-12-17T12:25:00')
       },
       {
         key: 'element-2',
+        title: faker.name.jobTitle(),
+        content: faker.lorem.paragraph(),
+        start: new Date('2019-12-17T12:30:00'),
+        end: new Date('2019-12-17T12:45:00')
+      },
+      {
+        key: 'element-3',
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T13:30:00'),

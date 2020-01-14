@@ -38,6 +38,10 @@ class Timeline extends Component {
     window.addEventListener('resize', this.handleResize)
     window.requestAnimationFrame(() => {
       this.handleLayoutChange()
+
+      if (this.props.scrollToCurrentTime) {
+        this.scrollToCurrentTime()
+      }
     })
   }
 
@@ -70,6 +74,7 @@ class Timeline extends Component {
   }
 
   // this value is maximal width of any col, we use overflow: hidden to prevent to expand them
+  // noinspection JSMethodCanBeStatic
   calculateColWidth (width, count) {
     return Math.ceil(width / count)
   }
@@ -124,6 +129,10 @@ class Timeline extends Component {
       return
     }
     this.props.handleElementClick(element, rowIndex, e)
+  }
+
+  scrollToCurrentTime = () => {
+    this.currentTimeLabelRef.current.scrollIntoView()
   }
 
   timeToOffset = date => {
@@ -365,6 +374,7 @@ Timeline.propTypes = {
   renderRowHeader: PropTypes.func.isRequired,
   handleElementClick: PropTypes.func,
   timeFormatFunction: PropTypes.func,
+  scrollToCurrentTime: PropTypes.bool,
   // todo: validate with requiredIf or make yours validator
   currentTimeOverlapClass: PropTypes.string,
   rowsHeaderClass: PropTypes.string,
