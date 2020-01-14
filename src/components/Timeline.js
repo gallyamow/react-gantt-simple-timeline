@@ -132,7 +132,9 @@ class Timeline extends Component {
   }
 
   scrollToCurrentTime = () => {
-    this.currentTimeLabelRef.current.scrollIntoView()
+    this.currentTimeLabelRef.current.scrollIntoView({
+      inline: 'center'
+    })
   }
 
   timeToOffset = date => {
