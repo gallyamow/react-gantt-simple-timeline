@@ -378,7 +378,7 @@ Timeline.propTypes = {
   rowsHeaderClass: PropTypes.string,
   colsHeaderClass: PropTypes.string,
   gridLineClass: PropTypes.string,
-  rowsBodyClass: PropTypes.string,
+  rowsBodyClass: PropTypes.string
 }
 
 export default Timeline

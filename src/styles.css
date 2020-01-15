@@ -33,7 +33,6 @@
 }
 
 .element {
-  cursor: pointer;
   position: absolute;
   overflow: hidden;
   box-sizing: border-box;
