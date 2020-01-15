@@ -54,9 +54,7 @@ class Example extends Component {
   render () {
     return (
       <Timeline
-        from={START_DATE}
-        to={END_DATE}
-        current={CURRENT_DATE}
+        current={new Date()}
         rows={ROWS}
         cols={COLS}
         currentTimeOverlapClass='currentTimeOverlap'

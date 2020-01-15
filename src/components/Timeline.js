@@ -7,7 +7,8 @@ import styles from '../styles.css'
 class Timeline extends Component {
   constructor (props) {
     super(props)
-    const { from, to, cols, rows } = this.props
+
+    const { cols, rows } = this.props
 
     this.colsHeaderRef = React.createRef()
     this.rowsRefs = rows.map(React.createRef)
@@ -17,9 +18,13 @@ class Timeline extends Component {
     }, {})
     this.currentTimeLabelRef = React.createRef()
 
-    const duration = Math.round((to.getTime() - from.getTime()) / 1000)
+    const from = new Date(Math.min(...rows.map(row => Math.min(...row.elements.map(el => el.start)))))
+    const to = new Date(Math.max(...rows.map(row => Math.max(...row.elements.map(el => el.end)))))
+    const duration = Math.floor(to.getTime() / 1000) - Math.floor(from.getTime() / 1000)
 
     this.state = {
+      from,
+      to,
       colsHeaderSize: undefined,
       currentTimeLabelSize: undefined,
       horizontalOffset: undefined,
@@ -69,38 +74,30 @@ class Timeline extends Component {
     })
   }
 
-  calculateScale = (width, duration) => {
-    return width / duration
-  }
-
-  // this value is maximal width of any col, we use overflow: hidden to prevent to expand them
-  // noinspection JSMethodCanBeStatic
-  calculateColWidth (width, count) {
-    return Math.ceil(width / count)
-  }
-
   handleLayoutChange = () => {
     const { fixedColWidth, current } = this.props
-    const { colsHeaderSize, currentTimeLabelSize, rowSizes, duration, colsCount } = this.state
+    const { colsHeaderSize, currentTimeLabelSize, rowSizes, colsCount } = this.state
 
     const nextColHeaderSize = this.calculateSize(this.colsHeaderRef)
 
     // получили значение ширины
     if (colsHeaderSize === undefined || !isSizeEqual(nextColHeaderSize, colsHeaderSize)) {
-      const scale = this.calculateScale(nextColHeaderSize.width, duration)
-
       // we use fixed width or calculate it base on current cols header width
-      const colWidth = fixedColWidth === undefined
-        ? this.calculateColWidth(nextColHeaderSize.width, colsCount)
+      let colWidth = fixedColWidth === undefined
+        ? Math.round(nextColHeaderSize.width / colsCount)
         : fixedColWidth
 
-      const horizontalOffset = Math.round(colWidth / 2)
+      // // we need even number for division to 2
+      // if (colWidth % 2 !== 0) {
+      //   colWidth += 1
+      // }
+
+      const horizontalOffset = Math.floor(colWidth / 2)
 
       this.setState({
         colsHeaderSize: nextColHeaderSize,
         horizontalOffset,
-        colWidth,
-        scale
+        colWidth
       })
     }
 
@@ -138,9 +135,10 @@ class Timeline extends Component {
   }
 
   timeToOffset = date => {
-    const { from } = this.props
-    const { horizontalOffset } = this.state
-    return Math.round(this.state.scale * ((date.getTime() - from.getTime()) / 1000)) + horizontalOffset
+    const { from, colsHeaderSize, duration, horizontalOffset } = this.state
+    const offset = Math.floor(date.getTime() / 1000) - Math.floor(from.getTime() / 1000)
+
+    return Math.floor(colsHeaderSize.width * offset / duration) + horizontalOffset
   }
 
   renderRowsHeader = () => {
@@ -153,7 +151,7 @@ class Timeline extends Component {
     >
       {rows.map((row, rowIndex) => {
         const style = {
-          height: rowSizes[rowIndex].height + 'px',
+          height: rowSizes[rowIndex].height + 'px'
         }
 
         return (
@@ -305,7 +303,7 @@ class Timeline extends Component {
           {colWidth && summaryRowsHeight && current && this.renderCurrentTimeLine()}
           {this.renderColsHeader()}
 
-          {rows.map((row, rowIndex) => {
+          {colsHeaderSize && rows.map((row, rowIndex) => {
             const rowStyle = {}
             if (rowSizes) {
               rowStyle.width = rowSizes[rowIndex].width + 'px'
@@ -346,8 +344,6 @@ class Timeline extends Component {
 }
 
 Timeline.propTypes = {
-  from: PropTypes.instanceOf(Date).isRequired,
-  to: PropTypes.instanceOf(Date).isRequired,
   current: PropTypes.instanceOf(Date),
   rows: PropTypes.arrayOf(
     PropTypes.shape({

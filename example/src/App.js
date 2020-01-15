@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Timeline from 'react-gantt-simple-timeline'
-import { START_DATE, END_DATE, CURRENT_DATE, ROWS, COLS } from './data'
+import { CURRENT_DATE, ROWS, COLS } from './data'
 import { getRandomVariant, formatTime } from './utils'
 
 export default class App extends Component {
@@ -45,8 +45,6 @@ export default class App extends Component {
   render () {
     return (
       <Timeline
-        from={START_DATE}
-        to={END_DATE}
         current={CURRENT_DATE}
         rows={ROWS}
         cols={COLS}
