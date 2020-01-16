@@ -32,7 +32,7 @@ export default class App extends Component {
     </div>
   )
 
-  timeFormatFunction = (date) => {
+  renderCurrentTimeLabel = (date) => {
     return formatTime(date)
   }
 
@@ -49,14 +49,14 @@ export default class App extends Component {
         rows={ROWS}
         cols={COLS}
         scrollToCurrentTime={true}
-        timeFormatFunction={this.timeFormatFunction}
+        renderCurrentTimeLabel={this.renderCurrentTimeLabel}
         renderElement={this.renderElement}
         renderColHeader={this.renderColHeader}
         renderRowHeader={this.renderRowHeader}
         handleElementClick={this.handleElementClick}
-        gridColor='#CCCCCC'
-        currentTimeOverlapClass='custom-current-time'
         rowsBodyClass='custom-rows-body'
+        currentTimeOverlapClass='custom-current-time'
+        alignElementHeight={false}
       />
     )
   }

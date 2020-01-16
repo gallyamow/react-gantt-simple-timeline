@@ -35,7 +35,7 @@ class Timeline extends Component {
       colsCount: cols.length,
       rowsCount: rows.length,
       duration,
-      gutter: 5
+      verticalGridLineElevation: 5
     }
   }
 
@@ -190,64 +190,70 @@ class Timeline extends Component {
     </div>
   }
 
-  renderHorizontalLine = (x, y, width, color) => (<div
-    key={x + '-' + y}
-    className={[this.props.gridLineClass, styles.gridLine].join(' ')}
-    style={{
-      position: 'absolute',
-      borderBottom: `1px solid ${color}`,
-      width: width + 'px',
-      left: x + 'px',
-      top: y + 'px'
-    }}
-  />)
+  renderHorizontalLine = (x, y, width, color) => (
+    <div
+      key={`h_${x}-${y}`}
+      className={[styles.gridLine, this.props.gridLineClass].join(' ')}
+      style={{
+        background: color,
+        width: width + 'px',
+        height: '1px',
+        left: x + 'px',
+        top: y + 'px'
+      }}
+    />)
 
-  renderVerticalLine = (x, y, height, color) => (<div
-    key={x + '-' + y}
-    className={[this.props.gridLineClass, styles.gridLine].join(' ')}
-    style={{
-      position: 'absolute',
-      borderLeft: `1px solid ${color}`,
-      height: height + 'px',
-      left: x + 'px',
-      top: y + 'px'
-    }}
-  />)
+  renderVerticalLine = (x, y, height, color) => (
+    <div
+      key={`v_${x}-${y}`}
+      className={[styles.gridLine, this.props.gridLineClass].join(' ')}
+      style={{
+        background: color,
+        width: '1px',
+        height: height + 'px',
+        left: x + 'px',
+        top: y + 'px'
+      }}
+    />)
 
   // todo: allow customize
   renderGrid = () => {
-    const { gridColor } = this.props
-    const { colsHeaderSize, colsCount, colWidth, rowSizes, summaryRowsHeight, horizontalOffset, gutter } = this.state
+    const { horizontalGridLineVisible, verticalGridLineVisible } = this.props
+    const { colsHeaderSize, colsCount, colWidth, rowSizes, summaryRowsHeight, horizontalOffset, verticalGridLineElevation } = this.state
 
     const res = []
 
-    // rows
-    let y = 0
-    y += colsHeaderSize.height
-    for (let rowSize of rowSizes) {
-      res.push(this.renderHorizontalLine(0, y, colsHeaderSize.width, gridColor))
-      y += rowSize.height
+    if (horizontalGridLineVisible) {
+      let y = 0
+      y += colsHeaderSize.height
+
+      for (let rowSize of rowSizes) {
+        res.push(this.renderHorizontalLine(0, y, colsHeaderSize.width))
+        y += rowSize.height
+      }
+
+      // last line
+      res.push(this.renderHorizontalLine(0, y, colsHeaderSize.width))
     }
 
-    // last line
-    res.push(this.renderHorizontalLine(0, y, colsHeaderSize.width, gridColor))
+    if (verticalGridLineVisible) {
+      let x = horizontalOffset
 
-    // cols
-    let x = horizontalOffset
-    for (let j = 0; j < colsCount; j++) {
-      res.push(this.renderVerticalLine(x, colsHeaderSize.height - gutter, summaryRowsHeight, gridColor))
-      x += colWidth
+      for (let j = 0; j < colsCount; j++) {
+        res.push(this.renderVerticalLine(x, colsHeaderSize.height - verticalGridLineElevation, summaryRowsHeight + verticalGridLineElevation))
+        x += colWidth
+      }
+
+      // last line
+      res.push(this.renderVerticalLine(x, colsHeaderSize.height - verticalGridLineElevation, summaryRowsHeight + verticalGridLineElevation))
     }
-
-    // last line
-    res.push(this.renderVerticalLine(x, colsHeaderSize.height - gutter, summaryRowsHeight, gridColor))
 
     return res
   }
 
   renderCurrentTimeLine = () => {
-    const { current, currentTimeOverlapClass, timeFormatFunction } = this.props
-    const { summaryRowsHeight, colsHeaderSize, gutter } = this.state
+    const { current, currentTimeOverlapClass, renderCurrentTimeLabel } = this.props
+    const { summaryRowsHeight, colsHeaderSize, verticalGridLineElevation } = this.state
     const x = this.timeToOffset(current)
 
     return <div
@@ -270,19 +276,19 @@ class Timeline extends Component {
         ref={this.currentTimeLabelRef}
         style={{
           position: 'absolute',
-          bottom: -(gutter) + 'px',
+          bottom: -(verticalGridLineElevation) + 'px',
           right: 0,
           transform: 'translate(50%, 100%)'
         }}
         className='label'
       >
-        {timeFormatFunction(current)}
+        {renderCurrentTimeLabel(current)}
       </div>
     </div>
   }
 
   render () {
-    const { rows, rowsBodyClass, maxWidth, current, renderElement } = this.props
+    const { rows, rowsBodyClass, maxWidth, current, renderElement, alignElementHeight } = this.props
     const { colsHeaderSize, rowSizes, colWidth, summaryRowsHeight } = this.state
 
     const style = {
@@ -305,6 +311,7 @@ class Timeline extends Component {
 
           {colsHeaderSize && rows.map((row, rowIndex) => {
             const rowStyle = {}
+
             if (rowSizes) {
               rowStyle.width = rowSizes[rowIndex].width + 'px'
               rowStyle.height = rowSizes[rowIndex].height + 'px'
@@ -320,7 +327,12 @@ class Timeline extends Component {
                 {row.elements.map((element, elementIndex) => {
                   const x1 = this.timeToOffset(element.start)
                   const x2 = this.timeToOffset(element.end)
+
                   const elementStyle = { left: x1 + 'px', width: (x2 - x1) + 'px' }
+
+                  if (alignElementHeight && rowStyle.height) {
+                    elementStyle.height = rowStyle.height
+                  }
 
                   return (
                     <div
@@ -366,19 +378,27 @@ Timeline.propTypes = {
   ).isRequired,
   maxWidth: PropTypes.number,
   fixedColWidth: PropTypes.number,
-  gridColor: PropTypes.string,
   renderElement: PropTypes.func.isRequired,
   renderColHeader: PropTypes.func.isRequired,
   renderRowHeader: PropTypes.func.isRequired,
+  renderCurrentTimeLabel: PropTypes.func,
   handleElementClick: PropTypes.func,
-  timeFormatFunction: PropTypes.func,
   scrollToCurrentTime: PropTypes.bool,
   // todo: validate with requiredIf or make yours validator
   currentTimeOverlapClass: PropTypes.string,
   rowsHeaderClass: PropTypes.string,
   colsHeaderClass: PropTypes.string,
   gridLineClass: PropTypes.string,
-  rowsBodyClass: PropTypes.string
+  rowsBodyClass: PropTypes.string,
+  verticalGridLineVisible: PropTypes.bool,
+  horizontalGridLineVisible: PropTypes.bool,
+  alignElementHeight: PropTypes.bool
+}
+
+Timeline.defaultProps = {
+  verticalGridLineVisible: true,
+  horizontalGridLineVisible: true,
+  alignElementHeight: false
 }
 
 export default Timeline
