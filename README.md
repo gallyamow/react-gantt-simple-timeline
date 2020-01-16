@@ -36,11 +36,11 @@ class Example extends Component {
     )
   }
 
-  renderColHeader = (col) => (
+  renderColHeaderItem = (col) => (
     <div className='your-col-head'>custom title</div>
   )
 
-  renderRowHeader = (col) => (
+  renderRowHeaderItem = (col) => (
     <div className='your-row-head'>custom header</div>
   )
 
@@ -60,8 +60,8 @@ class Example extends Component {
         currentTimeOverlapClass='currentTimeOverlap'
         timeFormatFunction={this.timeFormatFunction}
         renderElement={this.renderElement}
-        renderColHeader={this.renderColHeader}
-        renderRowHeader={this.renderRowHeader}
+        renderColHeader={this.renderColHeaderItem}
+        renderRowHeader={this.renderRowHeaderItem}
         handleElementClick={this.handleElementClick}
         gridColor='#CCCCCC'
         currentTimeOverlapClass='customizeIfNeed'

@@ -6,7 +6,7 @@ import { getRandomVariant, formatTime } from './utils'
 export default class App extends Component {
   renderElement = (element) => {
     const classNames = [
-      'custom-element',
+      'custom-element-wrapper',
       getRandomVariant(['red', 'grey', 'blue'])
     ]
     return (
@@ -20,11 +20,11 @@ export default class App extends Component {
     )
   }
 
-  renderColHeader = (col) => (
+  renderColHeaderItem = (col) => (
     <div className='custom-col-head'>{col.title}</div>
   )
 
-  renderRowHeader = (col) => (
+  renderRowHeaderItem = (col) => (
     <div className='custom-row-head'>
       <div className='wrapper'>
         <div className='content'>{col.title}</div>
@@ -51,11 +51,13 @@ export default class App extends Component {
         scrollToCurrentTime={true}
         renderCurrentTimeLabel={this.renderCurrentTimeLabel}
         renderElement={this.renderElement}
-        renderColHeader={this.renderColHeader}
-        renderRowHeader={this.renderRowHeader}
+        renderColHeaderItem={this.renderColHeaderItem}
+        renderRowHeaderItem={this.renderRowHeaderItem}
         handleElementClick={this.handleElementClick}
         rowsBodyClass='custom-rows-body'
         currentTimeOverlapClass='custom-current-time'
+        rowsHeaderClass='custom-row-header'
+        elementClass='custom-element'
         alignElementHeight={false}
       />
     )

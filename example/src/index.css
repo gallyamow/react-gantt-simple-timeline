@@ -24,7 +24,7 @@ body {
   align-items: center;
   background: #F4F7FB;
   padding: 0 2rem;
-  height: 99%;
+  height: 80%;
   width: 100%;
 }
 
@@ -40,6 +40,10 @@ body {
 }
 
 .custom-element {
+  padding: 1rem 0;
+}
+
+.custom-element-wrapper {
   box-sizing: border-box; /* to take all available space */
   height: 100%; /* to take all available space */
 
@@ -47,18 +51,18 @@ body {
   padding: 0.5rem;
 }
 
-.custom-element h3 {
+.custom-element-wrapper h3 {
   margin-top: 0;
   margin-bottom: 0.5rem;
 }
 
-.custom-element .time {
+.custom-element-wrapper .time {
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
   opacity: 0.7;
 }
 
-.custom-element .description {
+.custom-element-wrapper .description {
   margin-bottom: 0;
 }
 

@@ -2,16 +2,18 @@
   display: flex;
 }
 
-.colsHeaderItem {
+.colsHeader {
   display: inline-flex;
   flex-wrap: nowrap;
   text-align: center;
 }
 
+.colsHeaderItem {
+  box-sizing: border-box;
+}
+
 .rowsHeader {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: column;
+  box-sizing: border-box;
 }
 
 .rowsHeaderItem {

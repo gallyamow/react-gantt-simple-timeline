@@ -142,11 +142,11 @@ class Timeline extends Component {
   }
 
   renderRowsHeader = () => {
-    const { rows, rowsHeaderClass, renderRowHeader } = this.props
+    const { rows, rowsHeaderClass, renderRowHeaderItem } = this.props
     const { colsHeaderSize, rowSizes } = this.state
 
     return <div
-      className={[rowsHeaderClass, styles.rowsHeaderItem].join(' ')}
+      className={[styles.rowsHeader, rowsHeaderClass].join(' ')}
       style={{ paddingTop: colsHeaderSize.height + 'px' }}
     >
       {rows.map((row, rowIndex) => {
@@ -157,10 +157,10 @@ class Timeline extends Component {
         return (
           <div
             key={row.key}
-            className={styles.rowsHeaderItem}
+            className={[styles.rowsHeaderItem, 'item'].join(' ')}
             style={style}
           >
-            {renderRowHeader(row)}
+            {renderRowHeaderItem(row)}
           </div>
         )
       })}
@@ -168,7 +168,7 @@ class Timeline extends Component {
   }
 
   renderColsHeader = () => {
-    const { cols, colsHeaderClass, renderColHeader } = this.props
+    const { cols, colsHeaderClass, renderColHeaderItem } = this.props
     const { colWidth } = this.state
     const colStyle = {
       width: colWidth ? colWidth + 'px' : null
@@ -176,15 +176,15 @@ class Timeline extends Component {
 
     return <div
       ref={this.colsHeaderRef}
-      className={[colsHeaderClass, styles.colsHeaderItem].join(' ')}
+      className={[styles.colsHeader, colsHeaderClass].join(' ')}
     >
       {cols.map(col => (
         <div
           key={col.key}
-          className={styles.col}
+          className={[styles.colsHeaderItem, 'item'].join(' ')}
           style={colStyle}
         >
-          {renderColHeader(col)}
+          {renderColHeaderItem(col)}
         </div>
       ))}
     </div>
@@ -288,7 +288,7 @@ class Timeline extends Component {
   }
 
   render () {
-    const { rows, rowsBodyClass, maxWidth, current, renderElement, alignElementHeight } = this.props
+    const { rows, rowsBodyClass, rowClass, elementClass, maxWidth, current, renderElement, alignElementHeight } = this.props
     const { colsHeaderSize, rowSizes, colWidth, summaryRowsHeight } = this.state
 
     const style = {
@@ -303,7 +303,7 @@ class Timeline extends Component {
         {colsHeaderSize && rowSizes && this.renderRowsHeader()}
 
         <div
-          className={[rowsBodyClass, styles.rowsBody].join(' ')}
+          className={[styles.rowsBody, rowsBodyClass].join(' ')}
         >
           {colWidth && summaryRowsHeight && this.renderGrid()}
           {colWidth && summaryRowsHeight && current && this.renderCurrentTimeLine()}
@@ -321,7 +321,7 @@ class Timeline extends Component {
               <div
                 key={row.key}
                 ref={this.rowsRefs[rowIndex]}
-                className={styles.row}
+                className={[styles.row, rowClass].join(' ')}
                 style={rowStyle}
               >
                 {row.elements.map((element, elementIndex) => {
@@ -339,7 +339,7 @@ class Timeline extends Component {
                       key={element.key}
                       ref={this.elementsRefs[rowIndex][elementIndex]}
                       onClick={this.handleElementClick(element, rowIndex)}
-                      className={styles.element}
+                      className={[styles.element, elementClass].join(' ')}
                       style={elementStyle}
                     >
                       {renderElement(element)}
@@ -379,8 +379,8 @@ Timeline.propTypes = {
   maxWidth: PropTypes.number,
   fixedColWidth: PropTypes.number,
   renderElement: PropTypes.func.isRequired,
-  renderColHeader: PropTypes.func.isRequired,
-  renderRowHeader: PropTypes.func.isRequired,
+  renderColHeaderItem: PropTypes.func.isRequired,
+  renderRowHeaderItem: PropTypes.func.isRequired,
   renderCurrentTimeLabel: PropTypes.func,
   handleElementClick: PropTypes.func,
   scrollToCurrentTime: PropTypes.bool,
@@ -388,8 +388,10 @@ Timeline.propTypes = {
   currentTimeOverlapClass: PropTypes.string,
   rowsHeaderClass: PropTypes.string,
   colsHeaderClass: PropTypes.string,
+  elementClass: PropTypes.string,
   gridLineClass: PropTypes.string,
   rowsBodyClass: PropTypes.string,
+  rowClass: PropTypes.string,
   verticalGridLineVisible: PropTypes.bool,
   horizontalGridLineVisible: PropTypes.bool,
   alignElementHeight: PropTypes.bool
