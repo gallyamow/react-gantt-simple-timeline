@@ -4,9 +4,17 @@ import { CURRENT_DATE, ROWS, COLS } from './data'
 import { getRandomVariant, formatTime } from './utils'
 
 export default class App extends Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      rowsBodyScrollClass: undefined
+    }
+  }
+
   renderElement = (element) => {
     const classNames = [
-      'custom-element-wrapper',
+      'element-wrapper',
       getRandomVariant(['red', 'grey', 'blue'])
     ]
     return (
@@ -21,11 +29,11 @@ export default class App extends Component {
   }
 
   renderColHeaderItem = (col) => (
-    <div className='custom-col-head'>{col.title}</div>
+    <div className='col-head'>{col.title}</div>
   )
 
   renderRowHeaderItem = (col) => (
-    <div className='custom-row-head'>
+    <div className='row-head'>
       <div className='wrapper'>
         <div className='content'>{col.title}</div>
       </div>
@@ -42,7 +50,27 @@ export default class App extends Component {
     alert(`clicked to element with key "${element.key}" at row with index "${rowIndex}"`)
   }
 
+  handleScroll = (scrollX, event) => {
+    let res
+    switch (event) {
+      case 'scroll-begin':
+        res = 'scroll-begin'
+        break
+      case 'scroll-end':
+        res = 'scroll-end'
+        break
+      default:
+        res = undefined
+        break
+    }
+    this.setState({
+      rowsBodyScrollClass: res
+    })
+  }
+
   render () {
+    const { rowsBodyScrollClass } = this.state
+
     return (
       <Timeline
         current={CURRENT_DATE}
@@ -54,10 +82,11 @@ export default class App extends Component {
         renderColHeaderItem={this.renderColHeaderItem}
         renderRowHeaderItem={this.renderRowHeaderItem}
         handleElementClick={this.handleElementClick}
-        rowsBodyClass='custom-rows-body'
-        currentTimeOverlapClass='custom-current-time'
-        rowsHeaderClass='custom-row-header'
-        elementClass='custom-element'
+        handleScroll={this.handleScroll}
+        rowsBodyClass={['rows-body', rowsBodyScrollClass].join(' ')}
+        currentTimeOverlapClass='current-time'
+        rowsHeaderClass='row-header'
+        elementClass='element'
         alignElementHeight={false}
       />
     )

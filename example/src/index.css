@@ -7,11 +7,21 @@ body {
 }
 
 /* your customization styles */
-.custom-rows-body {
-  box-shadow: rgba(0, 0, 0, 0.1) -5px 0px 15px;
+.rows-body {
+  /*box-shadow: rgba(0, 0, 0, 0.1) -5px 0px 15px;*/
+  border-left: 1px rgba(0, 0, 0, .2) solid;
+  border-right: 1px rgba(0, 0, 0, .2) solid;
 }
 
-.custom-row-head {
+.rows-body.scroll-begin {
+  border-left: none;
+}
+
+.rows-body.scroll-end {
+  border-right: none;
+}
+
+.row-head {
   box-sizing: border-box; /* to take all available space */
   height: 100%; /* to take all available space */
   display: flex;
@@ -19,7 +29,7 @@ body {
   padding-right: 2rem;
 }
 
-.custom-row-head .wrapper {
+.row-head .wrapper {
   display: flex;
   align-items: center;
   background: #F4F7FB;
@@ -28,22 +38,22 @@ body {
   width: 100%;
 }
 
-.custom-row-head .wrapper .content {
+.row-head .wrapper .content {
   font-weight: bold;
 }
 
-.custom-col-head {
+.col-head {
   padding: 1rem;
   min-width: 4rem;
   font-weight: bold;
   opacity: 0.5;
 }
 
-.custom-element {
+.element {
   padding: 1rem 0;
 }
 
-.custom-element-wrapper {
+.element-wrapper {
   box-sizing: border-box; /* to take all available space */
   height: 100%; /* to take all available space */
 
@@ -51,18 +61,18 @@ body {
   padding: 0.5rem;
 }
 
-.custom-element-wrapper h3 {
+.element-wrapper h3 {
   margin-top: 0;
   margin-bottom: 0.5rem;
 }
 
-.custom-element-wrapper .time {
+.element-wrapper .time {
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
   opacity: 0.7;
 }
 
-.custom-element-wrapper .description {
+.element-wrapper .description {
   margin-bottom: 0;
 }
 
@@ -79,17 +89,17 @@ body {
   background: #5FC8FF;
 }
 
-.custom-current-time {
+.current-time {
   border-right: 1px solid #A11643;
   z-index: 2;
 }
 
-.custom-current-time .overlap {
+.current-time .overlap {
   opacity: 0.5;
   background: white;
 }
 
-.custom-current-time .label {
+.current-time .label {
   color: #A11643;
   font-weight: bold;
 }

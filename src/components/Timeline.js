@@ -17,6 +17,7 @@ class Timeline extends Component {
       return acc
     }, {})
     this.currentTimeLabelRef = React.createRef()
+    this.rowsBodyRef = React.createRef()
 
     const from = new Date(Math.min(...rows.map(row => Math.min(...row.elements.map(el => el.start)))))
     const to = new Date(Math.max(...rows.map(row => Math.max(...row.elements.map(el => el.end)))))
@@ -35,7 +36,9 @@ class Timeline extends Component {
       colsCount: cols.length,
       rowsCount: rows.length,
       duration,
-      verticalGridLineElevation: 5
+      verticalGridLineElevation: 5,
+      scrollX: 0,
+      scrollSize: undefined
     }
   }
 
@@ -47,11 +50,14 @@ class Timeline extends Component {
       if (this.props.scrollToCurrentTime) {
         this.scrollToCurrentTime()
       }
+
+      this.rowsBodyRef.current.addEventListener('scroll', this.handleScroll)
     })
   }
 
   componentWillUnmount () {
     window.removeEventListener('resize', this.handleResize)
+    this.rowsBodyRef.current.removeEventListener('scroll', this.handleScroll)
   }
 
   calculateSize = (ref) => ({
@@ -76,7 +82,7 @@ class Timeline extends Component {
 
   handleLayoutChange = () => {
     const { fixedColWidth, current } = this.props
-    const { colsHeaderSize, currentTimeLabelSize, rowSizes, colsCount } = this.state
+    const { colsHeaderSize, currentTimeLabelSize, scrollSize, rowSizes, colsCount } = this.state
 
     const nextColHeaderSize = this.calculateSize(this.colsHeaderRef)
 
@@ -109,6 +115,13 @@ class Timeline extends Component {
       })
     }
 
+    const rowsBodySize = this.calculateSize(this.rowsBodyRef)
+    if (rowsBodySize !== undefined && rowsBodySize.width !== scrollSize) {
+      this.setState({
+        scrollSize: this.rowsBodyRef.current.scrollWidth - rowsBodySize.width
+      })
+    }
+
     if (current) {
       const nextCurrentTimeLabelSize = this.calculateSize(this.currentTimeLabelRef)
       if (currentTimeLabelSize === undefined || !isSizeEqual(nextCurrentTimeLabelSize, currentTimeLabelSize)) {
@@ -120,6 +133,25 @@ class Timeline extends Component {
   }
 
   handleResize = () => this.handleLayoutChange()
+
+  handleScroll = () => {
+    const { scrollSize, colWidth } = this.state
+    const scrollPosition = this.rowsBodyRef.current.scrollLeft
+    this.setState({ scrollX: scrollPosition })
+
+    if (!this.props.handleScroll) {
+      return
+    }
+
+    let event = 'scrolled'
+    if (Math.abs(scrollPosition - 0) < colWidth) {
+      event = 'scroll-begin'
+    } else if (Math.abs(scrollPosition - scrollSize) < colWidth) {
+      event = 'scroll-end'
+    }
+
+    this.props.handleScroll(scrollPosition, event)
+  }
 
   handleElementClick = (element, rowIndex) => e => {
     if (!this.props.handleElementClick) {
@@ -295,6 +327,8 @@ class Timeline extends Component {
       maxWidth: maxWidth ? maxWidth + 'px' : null
     }
 
+    const rowsBodyClasses = [styles.rowsBody, rowsBodyClass]
+
     return (
       <div
         className={styles.root}
@@ -303,7 +337,8 @@ class Timeline extends Component {
         {colsHeaderSize && rowSizes && this.renderRowsHeader()}
 
         <div
-          className={[styles.rowsBody, rowsBodyClass].join(' ')}
+          ref={this.rowsBodyRef}
+          className={rowsBodyClasses.join(' ')}
         >
           {colWidth && summaryRowsHeight && this.renderGrid()}
           {colWidth && summaryRowsHeight && current && this.renderCurrentTimeLine()}
@@ -383,6 +418,7 @@ Timeline.propTypes = {
   renderRowHeaderItem: PropTypes.func.isRequired,
   renderCurrentTimeLabel: PropTypes.func,
   handleElementClick: PropTypes.func,
+  handleScroll: PropTypes.func,
   scrollToCurrentTime: PropTypes.bool,
   // todo: validate with requiredIf or make yours validator
   currentTimeOverlapClass: PropTypes.string,
