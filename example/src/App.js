@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Timeline from 'react-gantt-simple-timeline'
-import { CURRENT_DATE, ROWS, COLS } from './data'
-import { getRandomVariant, formatTime } from './utils'
+import { COLS, CURRENT_DATE, ROWS } from './data'
+import { formatTime } from './utils'
 
 export default class App extends Component {
   constructor (props) {
@@ -13,12 +13,8 @@ export default class App extends Component {
   }
 
   renderElement = (element) => {
-    const classNames = [
-      'element-wrapper',
-      getRandomVariant(['red', 'grey', 'blue'])
-    ]
     return (
-      <div className={classNames.join(' ')}>
+      <div className={['element-wrapper', element.color].join(' ')}>
         <div className='time'>
           {formatTime(element.start)} - {formatTime(element.end)}
         </div>

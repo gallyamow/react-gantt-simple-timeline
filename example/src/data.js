@@ -1,5 +1,5 @@
 import faker from 'faker'
-import { formatTime } from './utils'
+import { formatTime, getRandomVariant } from './utils'
 
 const START_DATE = new Date('2019-12-17T12:00:00')
 const END_DATE = new Date('2019-12-17T15:00:00')
@@ -30,21 +30,24 @@ const ROWS = [
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T12:03:00'),
-        end: new Date('2019-12-17T12:25:00')
+        end: new Date('2019-12-17T12:25:00'),
+        color: getRandomVariant(['red', 'grey', 'blue'])
       },
       {
         key: 'element-2',
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T12:30:00'),
-        end: new Date('2019-12-17T12:45:00')
+        end: new Date('2019-12-17T12:45:00'),
+        color: getRandomVariant(['red', 'grey', 'blue'])
       },
       {
         key: 'element-3',
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T13:30:00'),
-        end: new Date('2019-12-17T14:59:00')
+        end: new Date('2019-12-17T14:59:00'),
+        color: getRandomVariant(['red', 'grey', 'blue'])
       }
     ]
   },
@@ -57,21 +60,24 @@ const ROWS = [
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T12:15:00'),
-        end: new Date('2019-12-17T12:30:00')
+        end: new Date('2019-12-17T12:30:00'),
+        color: getRandomVariant(['red', 'grey', 'blue'])
       },
       {
         key: 'element-2',
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T12:42:00'),
-        end: new Date('2019-12-17T13:00:00')
+        end: new Date('2019-12-17T13:00:00'),
+        color: getRandomVariant(['red', 'grey', 'blue'])
       },
       {
         key: 'element-3',
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T13:03:00'),
-        end: new Date('2019-12-17T13:40:00')
+        end: new Date('2019-12-17T13:40:00'),
+        color: getRandomVariant(['red', 'grey', 'blue'])
       }
     ]
   },
@@ -84,28 +90,32 @@ const ROWS = [
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T12:00:00'),
-        end: new Date('2019-12-17T12:45:00')
+        end: new Date('2019-12-17T12:45:00'),
+        color: getRandomVariant(['red', 'grey', 'blue'])
       },
       {
         key: 'element-2',
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T12:52:00'),
-        end: new Date('2019-12-17T13:05:00')
+        end: new Date('2019-12-17T13:05:00'),
+        color: getRandomVariant(['red', 'grey', 'blue'])
       },
       {
         key: 'element-3',
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T13:09:00'),
-        end: new Date('2019-12-17T13:45:00')
+        end: new Date('2019-12-17T13:45:00'),
+        color: getRandomVariant(['red', 'grey', 'blue'])
       },
       {
         key: 'element-4',
         title: faker.name.jobTitle(),
         content: faker.lorem.paragraph(),
         start: new Date('2019-12-17T13:50:00'),
-        end: new Date('2019-12-17T15:00:00')
+        end: new Date('2019-12-17T15:00:00'),
+        color: getRandomVariant(['red', 'grey', 'blue'])
       }
     ]
   }
