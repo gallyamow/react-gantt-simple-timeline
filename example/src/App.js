@@ -68,23 +68,25 @@ export default class App extends Component {
     const { rowsBodyScrollClass } = this.state
 
     return (
-      <Timeline
-        current={CURRENT_DATE}
-        rows={ROWS}
-        cols={COLS}
-        scrollToCurrentTime={true}
-        renderCurrentTimeLabel={this.renderCurrentTimeLabel}
-        renderElement={this.renderElement}
-        renderColHeaderItem={this.renderColHeaderItem}
-        renderRowHeaderItem={this.renderRowHeaderItem}
-        handleElementClick={this.handleElementClick}
-        handleScroll={this.handleScroll}
-        rowsBodyClass={['rows-body', rowsBodyScrollClass].join(' ')}
-        currentTimeOverlapClass='current-time'
-        rowsHeaderClass='row-header'
-        elementClass='element'
-        alignElementHeight={false}
-      />
+      <div style={{ padding: 10 }}>
+        <Timeline
+          current={CURRENT_DATE}
+          rows={ROWS}
+          cols={COLS}
+          scrollToCurrentTime={true}
+          renderCurrentTimeLabel={this.renderCurrentTimeLabel}
+          renderElement={this.renderElement}
+          renderColHeaderItem={this.renderColHeaderItem}
+          renderRowHeaderItem={this.renderRowHeaderItem}
+          handleElementClick={this.handleElementClick}
+          handleScroll={this.handleScroll}
+          rowsBodyClass={['rows-body', rowsBodyScrollClass].join(' ')}
+          currentTimeOverlapClass='current-time'
+          rowsHeaderClass='row-header'
+          elementClass='element'
+          alignElementHeight={false}
+        />
+      </div>
     )
   }
 }

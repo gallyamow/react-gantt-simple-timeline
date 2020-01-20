@@ -37,7 +37,6 @@ class Timeline extends Component {
       rowsCount: rows.length,
       duration,
       verticalGridLineElevation: 5,
-      scrollX: 0,
       scrollSize: undefined
     }
   }
@@ -136,21 +135,22 @@ class Timeline extends Component {
 
   handleScroll = () => {
     const { scrollSize, colWidth } = this.state
-    const scrollPosition = this.rowsBodyRef.current.scrollLeft
-    this.setState({ scrollX: scrollPosition })
+    const pos = this.rowsBodyRef.current.scrollLeft
+
+    /* this.setState({ scrollX: scrollPosition }) */
 
     if (!this.props.handleScroll) {
       return
     }
 
     let event = 'scrolled'
-    if (Math.abs(scrollPosition - 0) < colWidth) {
+    if (Math.abs(pos - 0) < colWidth) {
       event = 'scroll-begin'
-    } else if (Math.abs(scrollPosition - scrollSize) < colWidth) {
+    } else if (Math.abs(pos - scrollSize) < colWidth) {
       event = 'scroll-end'
     }
 
-    this.props.handleScroll(scrollPosition, event)
+    this.props.handleScroll(pos, event)
   }
 
   handleElementClick = (element, rowIndex) => e => {
@@ -260,12 +260,12 @@ class Timeline extends Component {
       y += colsHeaderSize.height
 
       for (let rowSize of rowSizes) {
-        res.push(this.renderHorizontalLine(0, y, colsHeaderSize.width))
+        res.push(this.renderHorizontalLine(0, y, colsHeaderSize.width + horizontalOffset))
         y += rowSize.height
       }
 
       // last line
-      res.push(this.renderHorizontalLine(0, y, colsHeaderSize.width))
+      res.push(this.renderHorizontalLine(0, y, colsHeaderSize.width + horizontalOffset))
     }
 
     if (verticalGridLineVisible) {

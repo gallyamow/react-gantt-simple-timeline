@@ -51,6 +51,7 @@ body {
 
 .element {
   padding: 1rem 0;
+  cursor: pointer;
 }
 
 .element-wrapper {
@@ -90,6 +91,9 @@ body {
 }
 
 .current-time {
+  /* set 'none' if you wan't to handle clicks on overlapped elements */
+  pointer-events: none;
+
   border-right: 1px solid #A11643;
   z-index: 2;
 }
