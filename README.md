@@ -10,7 +10,7 @@
 
 * custom headers content
 * custom element content
-* fixed and auto fit width
+
 
 ## Install
 
